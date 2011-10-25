@@ -68,6 +68,15 @@ namespace LibraryWithPrivateMembers {
             }
         }
 
+        private T SomeGenericMethod<T>(T value) {
+            return value;
+        }
+
+        private Exception SomeMethodWithNoPrimitiveResult()
+        {
+            return new ApplicationException();
+        }
+
         internal new string SomeMethodThatGetsHiddenInDerivedClass() {
             return "Foo.SomeMethod";
         }
