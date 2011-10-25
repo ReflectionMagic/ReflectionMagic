@@ -75,7 +75,7 @@ namespace ReflectionMagic {
 
         public override bool TryConvert(ConvertBinder binder, out object result)
         {
-            result = Convert.ChangeType(Instance, binder.Type);
+            result = binder.Type.IsAssignableFrom(RealObject.GetType()) ? RealObject : Convert.ChangeType(RealObject, binder.Type);
             return true;
         }
 
