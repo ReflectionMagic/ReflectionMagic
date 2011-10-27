@@ -228,5 +228,18 @@ namespace ReflectionMagicTests
             buildManagerHost._buildManager = buildManager;
             Assert.AreEqual(buildManagerHost._buildManager.RealObject, buildManager.RealObject);
         }
+
+        [TestMethod]
+        public void TestGenericMethod()
+        {
+            var result = dynamicFoo.SomeGenericMethod<string>("test");
+            Assert.AreEqual("test", result);
+        }
+
+        [TestMethod]
+        public void MethodWithNoPrimitiveResult()
+        {
+            var result = (Exception)dynamicFoo.SomeMethodWithNoPrimitiveResult();
+        }
     }
 }

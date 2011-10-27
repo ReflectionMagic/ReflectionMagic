@@ -64,10 +64,11 @@ namespace ReflectionMagic
         // Called when a method is called
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
-            var csharpBinder =
-                binder.GetType().GetInterface("Microsoft.CSharp.RuntimeBinder.ICSharpInvokeOrInvokeMemberBinder");
+            for (int i = 0; i < args.Length; i++)
+                args[i] = Unwrap(args[i]);
+            var csharpBinder = binder.GetType().GetInterface("Microsoft.CSharp.RuntimeBinder.ICSharpInvokeOrInvokeMemberBinder");
             var typeArgs = (csharpBinder.GetProperty("TypeArguments").GetValue(binder, null) as IList<Type>);
-            result = InvokeMethodOnType(RealObject.GetType(), RealObject, binder.Name, args, typeArgs);
+            result = InvokeMethodOnType(TargetType, Instance, binder.Name, args, typeArgs);
 
             // Wrap the sub object if necessary. This allows nested anonymous objects to work.
             result = result.AsDynamic();
@@ -156,14 +157,17 @@ namespace ReflectionMagic
             return typeProperties;
         }
 
-        private static bool ParametersCompatible(ICollection<ParameterInfo> params1, IList<object> params2)
+        private static bool ParametersCompatible(MethodInfo method, object[] params2, IList<Type> typeArgs)
         {
-            if (params1.Count != params2.Count)
+            if (typeArgs != null && typeArgs.Count > 0)
+                method = method.MakeGenericMethod(typeArgs.ToArray());
+            var params1 = method.GetParameters();
+            if (params1.Length != params2.Length)
                 return false;
             return
                 !params1.Where(
                     (t, i) =>
-                    !((params2[i] == null && t.ParameterType.IsClass) ||
+                    !((params2[i] == null && !t.ParameterType.IsValueType) ||
                       t.ParameterType.IsAssignableFrom(params2[i].GetType()))).Any();
         }
 
@@ -173,8 +177,8 @@ namespace ReflectionMagic
             if (type == null)
                 throw new ApplicationException();
             var method =
-                type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).Where(
-                    a => a.Name == name && ParametersCompatible(a.GetParameters(), args)).FirstOrDefault();
+                type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).Where(
+                    a => a.Name == name && ParametersCompatible(a, args, typeArgs)).FirstOrDefault();
             if (method == null)
                 return InvokeMethodOnType(type.BaseType, target, name, args, typeArgs);
             if (typeArgs.Count > 0)
