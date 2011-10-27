@@ -5,8 +5,10 @@ using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 
-namespace ReflectionMagic {
-    public abstract class PrivateReflectionDynamicObjectBase : DynamicObject {
+namespace ReflectionMagic
+{
+    public abstract class PrivateReflectionDynamicObjectBase : DynamicObject
+    {
         // We need to virtualize this so we use a different cache for instance and static props
         internal abstract IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType { get; }
 

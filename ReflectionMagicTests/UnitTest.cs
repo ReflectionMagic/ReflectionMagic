@@ -4,55 +4,65 @@ using LibraryWithPrivateMembers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ReflectionMagic;
 
-namespace ReflectionMagicTests {
+namespace ReflectionMagicTests
+{
     [TestClass]
-    public class UnitTest {
+    public class UnitTest
+    {
         private dynamic dynamicFoo;
         private dynamic dynamicFooType;
 
         [ClassInitialize()]
-        public static void ClassInitialize(TestContext testContext) {
+        public static void ClassInitialize(TestContext testContext)
+        {
         }
 
         [TestInitialize()]
-        public void TestInitialize() {
+        public void TestInitialize()
+        {
             dynamicFooType = typeof(MarkerType).Assembly.GetDynamicType("LibraryWithPrivateMembers.Foo");
             dynamicFoo = typeof(MarkerType).Assembly.CreateDynamicInstance("LibraryWithPrivateMembers.Foo");
         }
 
         [TestMethod]
-        public void TestPropertyGetAndSetInternalInteger() {
+        public void TestPropertyGetAndSetInternalInteger()
+        {
             dynamicFoo.SomeInternalInteger = 17;
             Assert.AreEqual(17, dynamicFoo.SomeInternalInteger);
         }
 
         [TestMethod]
-        public void TestPropertyGetAndSetPublicBool() {
+        public void TestPropertyGetAndSetPublicBool()
+        {
             dynamicFoo.SomePublicBool = true;
             Assert.AreEqual(true, dynamicFoo.SomePublicBool);
         }
 
         [TestMethod]
-        public void TestPropertyGetAndSetPrivateString() {
+        public void TestPropertyGetAndSetPrivateString()
+        {
             dynamicFoo.SomePrivateString = "Hello";
             Assert.AreEqual("Hello", dynamicFoo.SomePrivateString);
         }
 
         [TestMethod]
-        public void TestPrivateIntegerField() {
+        public void TestPrivateIntegerField()
+        {
             Assert.AreEqual(-1, dynamicFoo._somePrivateIntegerField);
             dynamicFoo._somePrivateIntegerField = 12;
             Assert.AreEqual(12, dynamicFoo._somePrivateIntegerField);
         }
 
         [TestMethod]
-        public void TestOperatorOnIntegers() {
+        public void TestOperatorOnIntegers()
+        {
             dynamicFoo.SomeInternalInteger = 17;
             Assert.AreEqual(35, dynamicFoo.SomeInternalInteger * 2 + 1);
         }
 
         [TestMethod]
-        public void TestOperatorOnStrings() {
+        public void TestOperatorOnStrings()
+        {
             dynamicFoo.SomePrivateString = "Hello";
             Assert.AreEqual("Hello world", dynamicFoo.SomePrivateString + " world");
             Assert.AreEqual("Say Hello", "Say " + dynamicFoo.SomePrivateString);
@@ -60,12 +70,14 @@ namespace ReflectionMagicTests {
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void TestMissingProperty() {
+        public void TestMissingProperty()
+        {
             dynamicFoo.NotExist = "Hello";
         }
 
         [TestMethod]
-        public void TestMethodCalls() {
+        public void TestMethodCalls()
+        {
             dynamicFoo.SomeInternalInteger = 17;
 
             // This one is defined on the base type
@@ -78,21 +90,24 @@ namespace ReflectionMagicTests {
         }
 
         [TestMethod]
-        public void TestCallToMethodThatHidesBaseMethod() {
+        public void TestCallToMethodThatHidesBaseMethod()
+        {
             var val = dynamicFoo.SomeMethodThatGetsHiddenInDerivedClass();
 
             Assert.AreEqual("Foo.SomeMethod", val);
         }
 
         [TestMethod]
-        public void TestCallToPropertyThatHidesBaseProperty() {
+        public void TestCallToPropertyThatHidesBaseProperty()
+        {
             var val = dynamicFoo.SomePropertyThatGetsHiddenInDerivedClass;
 
             Assert.AreEqual("Foo.SomePropertyThatGetsHiddenInDerivedClass", val);
         }
 
         [TestMethod]
-        public void TestMethodCallThatTakesObject() {
+        public void TestMethodCallThatTakesObject()
+        {
             dynamicFoo._bar.SomeBarStringProperty = "Blah1";
             var barString = dynamicFoo.ReturnStringFromBarObject(dynamicFoo._bar.RealObject);
             Assert.AreEqual("Blah1", barString);
@@ -103,55 +118,64 @@ namespace ReflectionMagicTests {
         }
 
         [TestMethod]
-        public void TestMethodCallThatTakesType() {
+        public void TestMethodCallThatTakesType()
+        {
             var typeName = dynamicFoo.ReturnTypeName(dynamicFooType);
             Assert.AreEqual("LibraryWithPrivateMembers.Foo", typeName);
         }
 
         [TestMethod]
-        public void TestPropertyGetAndSetOnSubObject() {
+        public void TestPropertyGetAndSetOnSubObject()
+        {
             dynamicFoo._bar.SomeBarStringProperty = "Blah";
             Assert.AreEqual("Blah", dynamicFoo._bar.SomeBarStringProperty);
         }
 
         [TestMethod]
-        public void TestGettingBackRealObject() {
+        public void TestGettingBackRealObject()
+        {
             object realBar = dynamicFoo._bar.RealObject;
             Assert.AreEqual("Bar", realBar.GetType().Name);
         }
 
         [TestMethod]
-        public void TestObjectInstantiationWithNonDefaultCtor() {
+        public void TestObjectInstantiationWithNonDefaultCtor()
+        {
             var foo = dynamicFooType.New(123);
             Assert.AreEqual(123, foo.SomeInternalInteger);
         }
 
         [TestMethod]
-        public void TestStaticPropertyGetAndSet() {
+        public void TestStaticPropertyGetAndSet()
+        {
             dynamicFooType.SomeFooStaticStringProperty = "zzz";
             Assert.AreEqual("zzz", dynamicFooType.SomeFooStaticStringProperty);
         }
 
         [TestMethod]
-        public void TestStaticFieldGetAndSet() {
+        public void TestStaticFieldGetAndSet()
+        {
             Assert.AreEqual(17, dynamicFooType._somePrivateStaticIntegerField);
             dynamicFooType._somePrivateStaticIntegerField++;
             Assert.AreEqual(18, dynamicFooType._somePrivateStaticIntegerField);
         }
 
         [TestMethod]
-        public void TestStaticMethodCall() {
+        public void TestStaticMethodCall()
+        {
             var sum = dynamicFooType.AddDoubles(2.5, 3.5);
             Assert.AreEqual(6, sum);
         }
 
         [TestMethod]
-        public void TestNullSubObject() {
+        public void TestNullSubObject()
+        {
             Assert.AreEqual(null, dynamicFoo._barNull);
         }
 
         [TestMethod]
-        public void TestIndexedProperty() {
+        public void TestIndexedProperty()
+        {
             dynamicFoo["Hello"] = "qqq";
             dynamicFoo["Hello2"] = "qqq2";
             Assert.AreEqual("qqq", dynamicFoo["Hello"]);
@@ -159,7 +183,8 @@ namespace ReflectionMagicTests {
         }
 
         [TestMethod]
-        public void TestDictionaryAccess() {
+        public void TestDictionaryAccess()
+        {
             dynamicFoo._dict["Hello"] = "qqq";
             dynamicFoo._dict["Hello2"] = "qqq2";
             Assert.AreEqual("qqq", dynamicFoo._dict["Hello"]);
@@ -167,8 +192,9 @@ namespace ReflectionMagicTests {
         }
 
         [TestMethod]
-        public void TestMiscSystemWebCode() {
-            var sysWebAssembly = typeof (Control).Assembly;
+        public void TestMiscSystemWebCode()
+        {
+            var sysWebAssembly = typeof(Control).Assembly;
 
             var page = (new Page()).AsDynamic();
 
