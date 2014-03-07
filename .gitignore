@@ -6,3 +6,4 @@ TestResults
 *.vsp
 *.psess
 *.suo
+*.nupkg
