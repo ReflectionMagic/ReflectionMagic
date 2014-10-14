@@ -215,8 +215,6 @@ namespace ReflectionMagicTests
 
             Assert.AreEqual(ClientIDMode.Inherit, (ClientIDMode)page.EffectiveClientIDModeValue);
 
-            page.GetDelegateInformation(null);
-
             Assert.AreEqual("__Page", page.GetClientID());
 
             var buildManagerHostType = sysWebAssembly.GetDynamicType("System.Web.Compilation.BuildManagerHost");
