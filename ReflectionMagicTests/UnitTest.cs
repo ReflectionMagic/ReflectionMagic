@@ -228,6 +228,17 @@ namespace ReflectionMagicTests
         }
 
         [TestMethod]
+        public void TestAsDynamicIdempotent()
+        {
+            var sysWebAssembly = typeof(Control).Assembly;
+
+            var page = (new Page()).AsDynamic();
+
+            // Make sure AsDynamic is idempotent
+            Assert.AreEqual(page, ((object)page).AsDynamic());
+        }
+
+        [TestMethod]
         public void TestGenericMethod()
         {
             var result = dynamicFoo.SomeGenericMethod<string>("test");
