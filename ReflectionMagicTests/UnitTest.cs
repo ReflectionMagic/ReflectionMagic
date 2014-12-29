@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Web.UI;
 using LibraryWithPrivateMembers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -249,6 +250,24 @@ namespace ReflectionMagicTests
         public void MethodWithNoPrimitiveResult()
         {
             var result = (Exception)dynamicFoo.SomeMethodWithNoPrimitiveResult();
+        }
+
+        [TestMethod]
+        public void TestFieldsAndProperties()
+        {
+            var fooBar = new FooBar();
+            var properties = typeof(FooBar).GetProperties().Select(pi => pi.ToIProperty())
+                                 .Union(
+                             typeof(FooBar).GetFields().Select(fi => fi.ToIProperty()));
+            
+            foreach (var property in properties)
+            {
+                property.SetValue(fooBar, "test", null);
+                Assert.AreEqual(property.PropertyType, typeof(string));
+            }
+
+            Assert.AreEqual(fooBar._field, "test");
+            Assert.AreEqual(fooBar.Property, "test");
         }
     }
 }

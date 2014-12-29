@@ -1,9 +1,10 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace ReflectionMagic
 {
     // IProperty implementation over a FieldInfo
-    class Field : IProperty
+    public class Field : IProperty
     {
         internal FieldInfo FieldInfo { get; set; }
 
@@ -23,6 +24,16 @@ namespace ReflectionMagic
         void IProperty.SetValue(object obj, object val, object[] index)
         {
             FieldInfo.SetValue(obj, val);
+        }
+
+        public Type PropertyType { get { return FieldInfo.FieldType; } }
+    }
+
+    public static class FieldInfoExtensions
+    {
+        public static IProperty ToIProperty(this FieldInfo info)
+        {
+            return new Field { FieldInfo = info };
         }
     }
 }
