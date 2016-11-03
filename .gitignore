@@ -7,3 +7,7 @@ TestResults
 *.psess
 *.suo
 *.nupkg
+
+.vs
+
+project.lock.json
