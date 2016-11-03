@@ -90,7 +90,7 @@ namespace LibraryWithPrivateMembers
 
         private Exception SomeMethodWithNoPrimitiveResult()
         {
-            return new ApplicationException();
+            return new Exception();
         }
 
         internal new string SomeMethodThatGetsHiddenInDerivedClass()

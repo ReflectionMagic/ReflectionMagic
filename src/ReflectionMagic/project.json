@@ -1,0 +1,31 @@
+﻿{
+    "version": "3.0.0-*",
+
+    "authors": [ "David Ebbo" ],
+    "description": "Framework to drastically simplify your private reflection code using C# dynamic",
+    
+    "packOptions": {
+        "owners": [ "David Ebbo" ],
+        "licenseUrl": "http://www.opensource.org/licenses/ms-pl",
+        "projectUrl": "https://github.com/davidebbo/ReflectionMagic",
+        "tags": [ "dynamic" ]
+    },
+
+    "frameworks": {
+        "net45": {
+            "dependencies": { "System.Reflection": "4.0.0" }
+        },
+
+        "netstandard1.5": {
+            "dependencies": {
+                "System.Dynamic.Runtime": "4.0.11",
+                "Microsoft.CSharp": "4.0.1",
+
+                "System.Collections.Concurrent": "4.0.12",
+                "System.Runtime.InteropServices": "4.1.0",
+                "System.Linq": "4.1.0",
+                "System.Runtime.Extensions": "4.1.0"
+            }
+        }
+    }
+}

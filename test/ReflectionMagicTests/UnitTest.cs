@@ -1,273 +1,227 @@
 ﻿using System;
-using System.Linq;
-using System.Web.UI;
+using System.Reflection;
 using LibraryWithPrivateMembers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using ReflectionMagic;
+using System.Linq;
 
 namespace ReflectionMagicTests
 {
-    [TestClass]
     public class UnitTest
     {
-        private dynamic dynamicFoo;
         private dynamic dynamicFooType;
+        private dynamic dynamicFoo;
 
-        [ClassInitialize()]
-        public static void ClassInitialize(TestContext testContext)
+        public UnitTest()
         {
+            dynamicFooType = typeof(MarkerType).GetTypeInfo().Assembly.GetDynamicType("LibraryWithPrivateMembers.Foo");
+            dynamicFoo = typeof(MarkerType).GetTypeInfo().Assembly.CreateDynamicInstance("LibraryWithPrivateMembers.Foo");
         }
 
-        [TestInitialize()]
-        public void TestInitialize()
-        {
-            dynamicFooType = typeof(MarkerType).Assembly.GetDynamicType("LibraryWithPrivateMembers.Foo");
-            dynamicFoo = typeof(MarkerType).Assembly.CreateDynamicInstance("LibraryWithPrivateMembers.Foo");
-        }
-
-        [TestMethod]
+        [Fact]
         public void TestPropertyGetAndSetInternalInteger()
         {
             dynamicFoo.SomeInternalInteger = 17;
-            Assert.AreEqual(17, dynamicFoo.SomeInternalInteger);
+            Assert.Equal(17, dynamicFoo.SomeInternalInteger);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestPropertyGetAndSetPublicBool()
         {
             dynamicFoo.SomePublicBool = true;
-            Assert.AreEqual(true, dynamicFoo.SomePublicBool);
+            Assert.Equal(true, dynamicFoo.SomePublicBool);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestPropertyGetAndSetPrivateString()
         {
             dynamicFoo.SomePrivateString = "Hello";
-            Assert.AreEqual("Hello", dynamicFoo.SomePrivateString);
+            Assert.Equal("Hello", dynamicFoo.SomePrivateString);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestPrivateIntegerField()
         {
-            Assert.AreEqual(-1, dynamicFoo._somePrivateIntegerField);
+            Assert.Equal(-1, dynamicFoo._somePrivateIntegerField);
             dynamicFoo._somePrivateIntegerField = 12;
-            Assert.AreEqual(12, dynamicFoo._somePrivateIntegerField);
+            Assert.Equal(12, dynamicFoo._somePrivateIntegerField);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestOperatorOnIntegers()
         {
             dynamicFoo.SomeInternalInteger = 17;
-            Assert.AreEqual(35, dynamicFoo.SomeInternalInteger * 2 + 1);
+            Assert.Equal(35, dynamicFoo.SomeInternalInteger * 2 + 1);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestOperatorOnStrings()
         {
             dynamicFoo.SomePrivateString = "Hello";
-            Assert.AreEqual("Hello world", dynamicFoo.SomePrivateString + " world");
-            Assert.AreEqual("Say Hello", "Say " + dynamicFoo.SomePrivateString);
+            Assert.Equal("Hello world", dynamicFoo.SomePrivateString + " world");
+            Assert.Equal("Say Hello", "Say " + dynamicFoo.SomePrivateString);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Fact]
         public void TestMissingProperty()
         {
-            dynamicFoo.NotExist = "Hello";
+            Assert.Throws<ArgumentException>(() => dynamicFoo.NotExist = "Hello");
         }
 
-        [TestMethod]
-        public void TestMethodCalls()
+        [Fact]
+        public void FactCalls()
         {
             dynamicFoo.SomeInternalInteger = 17;
 
             // This one is defined on the base type
             var sum = dynamicFoo.AddIntegers(dynamicFoo.SomeInternalInteger, 3);
-            Assert.AreEqual(20, sum);
+            Assert.Equal(20, sum);
 
             // Different overload defined on the type itself
             sum = dynamicFoo.AddIntegers(dynamicFoo.SomeInternalInteger, 3, 4);
-            Assert.AreEqual(24, sum);
+            Assert.Equal(24, sum);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCallToMethodThatHidesBaseMethod()
         {
             var val = dynamicFoo.SomeMethodThatGetsHiddenInDerivedClass();
 
-            Assert.AreEqual("Foo.SomeMethod", val);
+            Assert.Equal("Foo.SomeMethod", val);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestCallToPropertyThatHidesBaseProperty()
         {
             var val = dynamicFoo.SomePropertyThatGetsHiddenInDerivedClass;
 
-            Assert.AreEqual("Foo.SomePropertyThatGetsHiddenInDerivedClass", val);
+            Assert.Equal("Foo.SomePropertyThatGetsHiddenInDerivedClass", val);
         }
 
-        [TestMethod]
-        public void TestMethodCallThatTakesObject()
+        [Fact]
+        public void FactCallThatTakesObject()
         {
             dynamicFoo._bar.SomeBarStringProperty = "Blah1";
             var barString = dynamicFoo.ReturnStringFromBarObject(dynamicFoo._bar.RealObject);
-            Assert.AreEqual("Blah1", barString);
+            Assert.Equal("Blah1", barString);
 
             dynamicFoo._bar.SomeBarStringProperty = "Blah2";
             barString = dynamicFoo.ReturnStringFromBarObject(dynamicFoo._bar);
-            Assert.AreEqual("Blah2", barString);
+            Assert.Equal("Blah2", barString);
         }
 
-        [TestMethod]
-        public void TestMethodCallThatTakesType()
+        [Fact]
+        public void FactCallThatTakesType()
         {
             var typeName = dynamicFoo.ReturnTypeName(dynamicFooType);
-            Assert.AreEqual("LibraryWithPrivateMembers.Foo", typeName);
+            Assert.Equal("LibraryWithPrivateMembers.Foo", typeName);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestPropertyGetAndSetOnSubObject()
         {
             dynamicFoo._bar.SomeBarStringProperty = "Blah";
-            Assert.AreEqual("Blah", dynamicFoo._bar.SomeBarStringProperty);
+            Assert.Equal("Blah", dynamicFoo._bar.SomeBarStringProperty);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestGettingBackRealObject()
         {
             object realBar = dynamicFoo._bar.RealObject;
-            Assert.AreEqual("Bar", realBar.GetType().Name);
+            Assert.Equal("Bar", realBar.GetType().Name);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestObjectInstantiationWithNonDefaultCtor()
         {
             var foo = dynamicFooType.New(123);
-            Assert.AreEqual(123, foo.SomeInternalInteger);
+            Assert.Equal(123, foo.SomeInternalInteger);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestStaticPropertyGetAndSet()
         {
             dynamicFooType.SomeFooStaticStringProperty = "zzz";
-            Assert.AreEqual("zzz", dynamicFooType.SomeFooStaticStringProperty);
+            Assert.Equal("zzz", dynamicFooType.SomeFooStaticStringProperty);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestStaticFieldGetAndSet()
         {
-            Assert.AreEqual(17, dynamicFooType._somePrivateStaticIntegerField);
+            Assert.Equal(17, dynamicFooType._somePrivateStaticIntegerField);
             dynamicFooType._somePrivateStaticIntegerField++;
-            Assert.AreEqual(18, dynamicFooType._somePrivateStaticIntegerField);
+            Assert.Equal(18, dynamicFooType._somePrivateStaticIntegerField);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestStaticMethodCall()
         {
             var sum = dynamicFooType.AddDoubles(2.5, 3.5);
-            Assert.AreEqual(6, sum);
+            Assert.Equal(6, sum);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestNullSubObject()
         {
-            Assert.AreEqual(null, dynamicFoo._barNull);
+            Assert.Equal(null, dynamicFoo._barNull);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestIndexedProperty()
         {
             dynamicFoo["Hello"] = "qqq";
             dynamicFoo["Hello2"] = "qqq2";
-            Assert.AreEqual("qqq", dynamicFoo["Hello"]);
-            Assert.AreEqual("qqq2", dynamicFoo["Hello2"]);
+            Assert.Equal("qqq", dynamicFoo["Hello"]);
+            Assert.Equal("qqq2", dynamicFoo["Hello2"]);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestDictionaryAccess()
         {
             dynamicFoo._dict["Hello"] = "qqq";
             dynamicFoo._dict["Hello2"] = "qqq2";
-            Assert.AreEqual("qqq", dynamicFoo._dict["Hello"]);
-            Assert.AreEqual("qqq2", dynamicFoo._dict["Hello2"]);
+            Assert.Equal("qqq", dynamicFoo._dict["Hello"]);
+            Assert.Equal("qqq2", dynamicFoo._dict["Hello2"]);
         }
 
-        [TestMethod]
-        public void TestMiscSystemWebCode()
-        {
-            var sysWebAssembly = typeof(Control).Assembly;
-
-            var page = (new Page()).AsDynamic();
-
-            var control1 = new Control() { ID = "foo1" };
-            page.Controls.Add(control1);
-            var control2 = sysWebAssembly.CreateDynamicInstance("System.Web.UI.Control");
-            control2.ID = "foo2";
-            page._controls.Add(control2);
-
-
-            Assert.AreEqual("foo1", control2._page._controls[0]._id);
-
-            // 5 is the default capacity in the ControlCollection
-            Assert.AreEqual(5, control2._page._controls._controls.Length);
-
-            control2._page._maxResourceOffset = 77;
-            Assert.AreEqual(77, page._maxResourceOffset);
-
-            Assert.AreEqual(ClientIDMode.Inherit, (ClientIDMode)page.EffectiveClientIDModeValue);
-
-            Assert.AreEqual("__Page", page.GetClientID());
-
-            var buildManagerHostType = sysWebAssembly.GetDynamicType("System.Web.Compilation.BuildManagerHost");
-            buildManagerHostType.InClientBuildManager = true;
-            Assert.AreEqual(true, buildManagerHostType.InClientBuildManager);
-
-            var buildManagerHost = buildManagerHostType.New();
-            var buildManager = sysWebAssembly.CreateDynamicInstance("System.Web.Compilation.BuildManager");
-            buildManagerHost._buildManager = buildManager;
-            Assert.AreEqual(buildManagerHost._buildManager.RealObject, buildManager.RealObject);
-        }
-
-        [TestMethod]
+        [Fact]
         public void TestAsDynamicIdempotent()
         {
-            var sysWebAssembly = typeof(Control).Assembly;
-
-            var page = (new Page()).AsDynamic();
+            var obj = (new object()).AsDynamic();
 
             // Make sure AsDynamic is idempotent
-            Assert.AreEqual(page, ((object)page).AsDynamic());
+            Assert.Equal(obj, ((object)obj).AsDynamic());
         }
 
-        [TestMethod]
+        [Fact]
         public void TestGenericMethod()
         {
             var result = dynamicFoo.SomeGenericMethod<string>("test");
-            Assert.AreEqual("test", result);
+            Assert.Equal("test", result);
         }
 
-        [TestMethod]
+        [Fact]
         public void MethodWithNoPrimitiveResult()
         {
             var result = (Exception)dynamicFoo.SomeMethodWithNoPrimitiveResult();
         }
 
-        [TestMethod]
+        [Fact]
         public void TestFieldsAndProperties()
         {
             var fooBar = new FooBar();
             var properties = typeof(FooBar).GetProperties().Select(pi => pi.ToIProperty())
                                  .Union(
                              typeof(FooBar).GetFields().Select(fi => fi.ToIProperty()));
-            
+
             foreach (var property in properties)
             {
                 property.SetValue(fooBar, "test", null);
-                Assert.AreEqual(property.PropertyType, typeof(string));
+                Assert.Equal(property.PropertyType, typeof(string));
             }
 
-            Assert.AreEqual(fooBar._field, "test");
-            Assert.AreEqual(fooBar.Property, "test");
+            Assert.Equal(fooBar._field, "test");
+            Assert.Equal(fooBar.Property, "test");
         }
     }
 }

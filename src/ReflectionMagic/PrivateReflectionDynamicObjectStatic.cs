@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace ReflectionMagic
@@ -36,8 +37,21 @@ namespace ReflectionMagic
 
         public dynamic New(params object[] args)
         {
-            return Activator.CreateInstance(TargetType,
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, args, null).AsDynamic();
+#if NET45
+            return Activator.CreateInstance(TargetType, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, args, null).AsDynamic();
+#else
+            var constructors = TargetType.GetTypeInfo().GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+            object result = (from t in constructors
+                             let parameters = t.GetParameters()
+                             where parameters.Length == args.Length
+                             select t.Invoke(args)).FirstOrDefault();
+
+            if (result == null)
+                throw new MissingMethodException("Constructor not found.");
+
+            return result.AsDynamic();
+#endif
         }
     }
 }

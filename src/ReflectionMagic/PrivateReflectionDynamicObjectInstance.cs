@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
@@ -34,5 +34,4 @@ namespace ReflectionMagic
             get { return BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic; }
         }
     }
-
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 
 namespace ReflectionMagic
@@ -8,7 +8,7 @@ namespace ReflectionMagic
         public static dynamic AsDynamic(this object o)
         {
             // Don't wrap primitive types, which don't have many interesting internal APIs
-            if (o == null || o.GetType().IsPrimitive || o is string || o is PrivateReflectionDynamicObjectBase)
+            if (o == null || o.GetType().GetTypeInfo().IsPrimitive || o is string || o is PrivateReflectionDynamicObjectBase)
                 return o;
 
             return new PrivateReflectionDynamicObjectInstance(o);

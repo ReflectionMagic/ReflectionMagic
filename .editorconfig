@@ -1,0 +1,16 @@
+# editorconfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Default settings:
+# A newline ending every file
+# Use 4 spaces as indentation
+[*]
+trim_trailing_whitespace = true
+insert_final_newline = true
+end_of_line = crlf
+
+# C#
+[*.cs]
+indent_size = 4
