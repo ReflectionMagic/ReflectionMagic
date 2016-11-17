@@ -1,5 +1,4 @@
-pushd ReflectionMagic
-msbuild /p:Configuration=Release
-nuget pack -symbols -Prop Configuration=Release
-move *.nupkg ..
-popd
+dotnet restore src/ReflectionMagic
+dotnet restore test/ReflectionMagicTests
+dotnet test test/ReflectionMagicTests
+dotnet pack -c Release -o . src/ReflectionMagic
