@@ -41,11 +41,14 @@ namespace ReflectionMagic
             return Activator.CreateInstance(TargetType, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, args, null).AsDynamic();
 #else
             var constructors = TargetType.GetTypeInfo().GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var argumentTypes = args.Select(x => x.GetType()).ToArray();
 
             object result = (from t in constructors
                              let parameters = t.GetParameters()
+                             let parameterTypes = parameters.Select(x => x.ParameterType)
                              where parameters.Length == args.Length
-                             select t.Invoke(args)).FirstOrDefault();
+                             where parameterTypes.SequenceEqual(argumentTypes)
+                             select t.Invoke(args)).SingleOrDefault();
 
             if (result == null)
                 throw new MissingMethodException("Constructor not found.");
