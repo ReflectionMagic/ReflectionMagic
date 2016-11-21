@@ -22,6 +22,7 @@ namespace ReflectionMagic
 
         // For instance calls, we get the type from the instance
         protected override Type TargetType { get { return _instance.GetType(); } }
+
         protected override object Instance { get { return _instance; } }
 
         public override object RealObject

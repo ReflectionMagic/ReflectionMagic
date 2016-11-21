@@ -16,6 +16,10 @@
     },
 
     "frameworks": {
+        "net40": {
+
+        },
+
         "net45": {
             "dependencies": { "System.Reflection": "4.0.0" }
         },
@@ -25,6 +29,7 @@
                 "System.Dynamic.Runtime": "4.0.11",
                 "Microsoft.CSharp": "4.0.1",
 
+                "System.Diagnostics.Debug": "4.0.11",
                 "System.Collections.Concurrent": "4.0.12",
                 "System.Runtime.InteropServices": "4.1.0",
                 "System.Linq": "4.1.0",
