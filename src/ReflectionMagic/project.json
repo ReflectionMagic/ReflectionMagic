@@ -3,12 +3,16 @@
 
     "authors": [ "David Ebbo" ],
     "description": "Framework to drastically simplify your private reflection code using C# dynamic",
-    
+
     "packOptions": {
         "owners": [ "David Ebbo" ],
         "licenseUrl": "http://www.opensource.org/licenses/ms-pl",
         "projectUrl": "https://github.com/davidebbo/ReflectionMagic",
         "tags": [ "dynamic" ]
+    },
+
+    "buildOptions": {
+        "keyFile": "../../ReflectionMagic.snk"
     },
 
     "frameworks": {
