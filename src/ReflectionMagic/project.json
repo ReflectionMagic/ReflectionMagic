@@ -17,11 +17,9 @@
 
     "frameworks": {
         "net40": {
-
         },
 
         "net45": {
-            "dependencies": { "System.Reflection": "4.0.0" }
         },
 
         "netstandard1.5": {
