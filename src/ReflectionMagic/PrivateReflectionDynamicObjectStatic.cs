@@ -9,26 +9,20 @@ namespace ReflectionMagic
     public class PrivateReflectionDynamicObjectStatic : PrivateReflectionDynamicObjectBase
     {
         private static readonly IDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new ConcurrentDictionary<Type, IDictionary<string, IProperty>>();
-        private readonly Type _type;
 
         public PrivateReflectionDynamicObjectStatic(Type type)
         {
-            _type = type;
+            TargetType = type;
         }
 
-        internal override IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType
-        {
-            get { return _propertiesOnType; }
-        }
+        internal override IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType => _propertiesOnType;
 
         // For static calls, we have the type and the instance is always null
-        protected override Type TargetType { get { return _type; } }
-        protected override object Instance { get { return null; } }
+        protected override Type TargetType { get; }
 
-        public override object RealObject
-        {
-            get { return TargetType; }
-        }
+        protected override object Instance => null;
+
+        public override object RealObject => TargetType;
 
         protected override BindingFlags BindingFlags
         {
@@ -37,7 +31,7 @@ namespace ReflectionMagic
 
         public dynamic New(params object[] args)
         {
-#if NET45
+#if NET40 || NET45
             return Activator.CreateInstance(TargetType, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, args, null).AsDynamic();
 #else
             var constructors = TargetType.GetTypeInfo().GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);

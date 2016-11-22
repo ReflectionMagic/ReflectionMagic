@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
+using static ReflectionMagic.ReflectionShim;
 
 namespace ReflectionMagic
 {
@@ -66,8 +67,8 @@ namespace ReflectionMagic
         {
             for (int i = 0; i < args.Length; i++)
                 args[i] = Unwrap(args[i]);
-            var csharpBinder = binder.GetType().GetTypeInfo().GetInterface("Microsoft.CSharp.RuntimeBinder.ICSharpInvokeOrInvokeMemberBinder");
-            var typeArgs = (csharpBinder.GetTypeInfo().GetProperty("TypeArguments").GetValue(binder, null) as IList<Type>);
+            var csharpBinder = GetInterface(binder.GetType(), "Microsoft.CSharp.RuntimeBinder.ICSharpInvokeOrInvokeMemberBinder");
+            var typeArgs = ReflectionShim.GetProperty(csharpBinder,"TypeArguments").GetValue(binder, null) as IList<Type>;
             result = InvokeMethodOnType(TargetType, Instance, binder.Name, args, typeArgs);
 
             // Wrap the sub object if necessary. This allows nested anonymous objects to work.
@@ -78,8 +79,8 @@ namespace ReflectionMagic
 
         public override bool TryConvert(ConvertBinder binder, out object result)
         {
+            result = IsInstanceOfType(binder.Type, RealObject) ? RealObject : Convert.ChangeType(RealObject, binder.Type);
 
-            result = binder.Type.GetTypeInfo().IsInstanceOfType(RealObject) ? RealObject : Convert.ChangeType(RealObject, binder.Type);
             return true;
         }
 
@@ -112,10 +113,8 @@ namespace ReflectionMagic
             // Get a list of supported properties and fields and show them as part of the exception message
             // For fields, skip the auto property backing fields (which name start with <)
             var propNames = typeProperties.Keys.Where(name => name[0] != '<').OrderBy(name => name);
-            throw new ArgumentException(
-               String.Format(
-                  "The property {0} doesn't exist on type {1}. Supported properties are: {2}",
-                  propertyName, TargetType, String.Join(", ", propNames)));
+
+            throw new ArgumentException($"The property {propertyName} doesn't exist on type {TargetType}. Supported properties are: {string.Join(", ", propNames)}");
         }
 
         private IDictionary<string, IProperty> GetTypeProperties(Type type)
@@ -132,22 +131,22 @@ namespace ReflectionMagic
             typeProperties = new ConcurrentDictionary<string, IProperty>();
 
             // First, recurse on the base class to add its fields
-            if (type.GetTypeInfo().BaseType != null)
+            if (GetBaseType(type) != null)
             {
-                foreach (IProperty prop in GetTypeProperties(type.GetTypeInfo().BaseType).Values)
+                foreach (IProperty prop in GetTypeProperties(GetBaseType(type)).Values)
                 {
                     typeProperties[prop.Name] = prop;
                 }
             }
 
             // Then, add all the properties from the current type
-            foreach (PropertyInfo prop in type.GetTypeInfo().GetProperties(BindingFlags).Where(p => p.DeclaringType == type))
+            foreach (PropertyInfo prop in GetProperties(type, BindingFlags).Where(p => p.DeclaringType == type))
             {
                 typeProperties[prop.Name] = new Property { PropertyInfo = prop };
             }
 
             // Finally, add all the fields from the current type
-            foreach (FieldInfo field in type.GetTypeInfo().GetFields(BindingFlags).Where(p => p.DeclaringType == type))
+            foreach (FieldInfo field in GetFields(type, BindingFlags).Where(p => p.DeclaringType == type))
             {
                 typeProperties[field.Name] = new Field { FieldInfo = field };
             }
@@ -168,8 +167,7 @@ namespace ReflectionMagic
             return
                !params1.Where(
                   (t, i) =>
-                     !((params2[i] == null && !t.ParameterType.GetTypeInfo().IsValueType) ||
-                       t.ParameterType.GetTypeInfo().IsInstanceOfType(params2[i]))).Any();
+                     !((params2[i] == null && !IsValueType(t.ParameterType)) || IsInstanceOfType(t.ParameterType, params2[i]))).Any();
         }
 
         private static object InvokeMethodOnType(Type type, object target, string name, object[] args,
@@ -179,12 +177,15 @@ namespace ReflectionMagic
                 throw new Exception();
 
             var method =
-               type.GetTypeInfo().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).Where(
-                  a => a.Name == name && ParametersCompatible(a, args, typeArgs)).FirstOrDefault();
+               GetMethods(type, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+               .FirstOrDefault(a => a.Name == name && ParametersCompatible(a, args, typeArgs));
+
             if (method == null)
-                return InvokeMethodOnType(type.GetTypeInfo().BaseType, target, name, args, typeArgs);
+                return InvokeMethodOnType(GetBaseType(type), target, name, args, typeArgs);
+
             if (typeArgs.Count > 0)
                 method = method.MakeGenericMethod(typeArgs.ToArray());
+
             return method.Invoke(target, args);
         }
 
