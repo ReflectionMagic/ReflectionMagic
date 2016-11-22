@@ -1,6 +1,6 @@
 using System;
 using System.Reflection;
-using static ReflectionMagic.ReflectionHelper;
+using static ReflectionMagic.ReflectionShim;
 
 namespace ReflectionMagic
 {

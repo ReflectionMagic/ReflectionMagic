@@ -1,10 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace ReflectionMagic
 {
-    internal static class ReflectionHelper
+    internal static class ReflectionShim
     {
         public static bool IsPrimitive(object obj)
         {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using static ReflectionMagic.ReflectionHelper;
+using static ReflectionMagic.ReflectionShim;
 
 namespace ReflectionMagic
 {
@@ -68,7 +68,7 @@ namespace ReflectionMagic
             for (int i = 0; i < args.Length; i++)
                 args[i] = Unwrap(args[i]);
             var csharpBinder = GetInterface(binder.GetType(), "Microsoft.CSharp.RuntimeBinder.ICSharpInvokeOrInvokeMemberBinder");
-            var typeArgs = ReflectionHelper.GetProperty(csharpBinder,"TypeArguments").GetValue(binder, null) as IList<Type>;
+            var typeArgs = ReflectionShim.GetProperty(csharpBinder,"TypeArguments").GetValue(binder, null) as IList<Type>;
             result = InvokeMethodOnType(TargetType, Instance, binder.Name, args, typeArgs);
 
             // Wrap the sub object if necessary. This allows nested anonymous objects to work.
