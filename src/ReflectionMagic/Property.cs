@@ -8,13 +8,9 @@ namespace ReflectionMagic
     {
         internal PropertyInfo PropertyInfo { get; set; }
 
-        string IProperty.Name
-        {
-            get
-            {
-                return PropertyInfo.Name;
-            }
-        }
+        public Type PropertyType => PropertyInfo.PropertyType;
+
+        string IProperty.Name => PropertyInfo.Name;
 
         object IProperty.GetValue(object obj, object[] index)
         {
@@ -26,7 +22,6 @@ namespace ReflectionMagic
             PropertyInfo.SetValue(obj, val, index);
         }
 
-        public Type PropertyType { get { return PropertyInfo.PropertyType; } }
     }
 
     public static class PropertyInfoExtensions

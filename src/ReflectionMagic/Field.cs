@@ -8,13 +8,9 @@ namespace ReflectionMagic
     {
         internal FieldInfo FieldInfo { get; set; }
 
-        string IProperty.Name
-        {
-            get
-            {
-                return FieldInfo.Name;
-            }
-        }
+        public Type PropertyType => FieldInfo.FieldType;
+
+        string IProperty.Name => FieldInfo.Name;
 
         object IProperty.GetValue(object obj, object[] index)
         {
@@ -25,8 +21,6 @@ namespace ReflectionMagic
         {
             FieldInfo.SetValue(obj, val);
         }
-
-        public Type PropertyType { get { return FieldInfo.FieldType; } }
     }
 
     public static class FieldInfoExtensions

@@ -78,8 +78,8 @@ namespace ReflectionMagic
 
         public override bool TryConvert(ConvertBinder binder, out object result)
         {
-
             result = binder.Type.GetTypeInfo().IsInstanceOfType(RealObject) ? RealObject : Convert.ChangeType(RealObject, binder.Type);
+
             return true;
         }
 
@@ -112,10 +112,9 @@ namespace ReflectionMagic
             // Get a list of supported properties and fields and show them as part of the exception message
             // For fields, skip the auto property backing fields (which name start with <)
             var propNames = typeProperties.Keys.Where(name => name[0] != '<').OrderBy(name => name);
-            throw new ArgumentException(
-               String.Format(
-                  "The property {0} doesn't exist on type {1}. Supported properties are: {2}",
-                  propertyName, TargetType, String.Join(", ", propNames)));
+
+            throw new MissingMemberException(
+                $"The property {propertyName} doesn\'t exist on type {TargetType}. Supported properties are: {string.Join(", ", propNames)}");
         }
 
         private IDictionary<string, IProperty> GetTypeProperties(Type type)
@@ -179,8 +178,10 @@ namespace ReflectionMagic
                 throw new Exception();
 
             var method =
-               type.GetTypeInfo().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).Where(
-                  a => a.Name == name && ParametersCompatible(a, args, typeArgs)).FirstOrDefault();
+               type.GetTypeInfo()
+               .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+               .FirstOrDefault(a => a.Name == name && ParametersCompatible(a, args, typeArgs));
+
             if (method == null)
                 return InvokeMethodOnType(type.GetTypeInfo().BaseType, target, name, args, typeArgs);
             if (typeArgs.Count > 0)

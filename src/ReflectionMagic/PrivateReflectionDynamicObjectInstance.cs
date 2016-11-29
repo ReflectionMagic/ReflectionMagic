@@ -15,23 +15,15 @@ namespace ReflectionMagic
             _instance = instance;
         }
 
-        internal override IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType
-        {
-            get { return _propertiesOnType; }
-        }
+        internal override IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType => _propertiesOnType;
 
         // For instance calls, we get the type from the instance
-        protected override Type TargetType { get { return _instance.GetType(); } }
-        protected override object Instance { get { return _instance; } }
+        protected override Type TargetType => _instance.GetType();
 
-        public override object RealObject
-        {
-            get { return Instance; }
-        }
+        protected override object Instance => _instance;
 
-        protected override BindingFlags BindingFlags
-        {
-            get { return BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic; }
-        }
+        public override object RealObject => Instance;
+
+        protected override BindingFlags BindingFlags => BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
     }
 }
