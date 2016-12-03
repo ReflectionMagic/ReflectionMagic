@@ -13,7 +13,9 @@ namespace ReflectionMagic
         internal abstract IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType { get; }
 
         protected abstract Type TargetType { get; }
+
         protected abstract object Instance { get; }
+
         protected abstract BindingFlags BindingFlags { get; }
 
         public abstract object RealObject { get; }
@@ -142,13 +144,13 @@ namespace ReflectionMagic
             // Then, add all the properties from the current type
             foreach (PropertyInfo prop in type.GetTypeInfo().GetProperties(BindingFlags).Where(p => p.DeclaringType == type))
             {
-                typeProperties[prop.Name] = new Property { PropertyInfo = prop };
+                typeProperties[prop.Name] = new Property(prop);
             }
 
             // Finally, add all the fields from the current type
             foreach (FieldInfo field in type.GetTypeInfo().GetFields(BindingFlags).Where(p => p.DeclaringType == type))
             {
-                typeProperties[field.Name] = new Field { FieldInfo = field };
+                typeProperties[field.Name] = new Field(field);
             }
 
             // Cache it for next time
