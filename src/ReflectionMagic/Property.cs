@@ -24,8 +24,10 @@ namespace ReflectionMagic
 
     }
 
+    [Obsolete()]
     public static class PropertyInfoExtensions
     {
+        [Obsolete("This is an internal API. If you are using this consider opening an issue on GitHub.")]
         public static IProperty ToIProperty(this PropertyInfo info)
         {
             return new Property { PropertyInfo = info };
