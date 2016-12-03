@@ -10,15 +10,25 @@ namespace ReflectionMagic
     {
         private static readonly IDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new ConcurrentDictionary<Type, IDictionary<string, IProperty>>();
 
+        private readonly Type _type;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PrivateReflectionDynamicObjectStatic"/> class, wrapping the specified type.
+        /// </summary>
+        /// <param name="type">The type to wrap.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="type"/> is <c>null</c>.</exception>
         public PrivateReflectionDynamicObjectStatic(Type type)
         {
-            TargetType = type;
+            if(type == null)
+                throw new ArgumentNullException(nameof(type));
+
+            _type = type;
         }
 
         internal override IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType => _propertiesOnType;
 
         // For static calls, we have the type and the instance is always null
-        protected override Type TargetType { get; }
+        protected override Type TargetType => _type;
 
         protected override object Instance => null;
 

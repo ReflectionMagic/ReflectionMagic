@@ -8,10 +8,19 @@ namespace ReflectionMagic
     public class PrivateReflectionDynamicObjectInstance : PrivateReflectionDynamicObjectBase
     {
         private static readonly IDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new ConcurrentDictionary<Type, IDictionary<string, IProperty>>();
+
         private readonly object _instance;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PrivateReflectionDynamicObjectInstance"/> class, wrapping the specified object.
+        /// </summary>
+        /// <param name="instance">The object to wrap.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="instance"/> is <c>null</c>.</exception>
         public PrivateReflectionDynamicObjectInstance(object instance)
         {
+            if(instance == null)
+                throw new ArgumentNullException(nameof(instance));
+
             _instance = instance;
         }
 

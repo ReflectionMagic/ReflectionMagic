@@ -1,4 +1,4 @@
-﻿{
+{
     "version": "3.0.0-*",
 
     "authors": [ "David Ebbo" ],
@@ -12,7 +12,10 @@
     },
 
     "buildOptions": {
-        "keyFile": "../../ReflectionMagic.snk"
+        "keyFile": "../../ReflectionMagic.snk",
+
+        "xmlDoc": true,
+        "nowarn": [ "CS1591" ]
     },
 
     "frameworks": {
