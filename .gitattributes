@@ -1,0 +1,9 @@
+# 
+*    text=auto
+*.cs diff=csharp
+
+# Solutions and projects should use windows line endings
+*.sln    text eol=crlf
+*.csproj text eol=crlf
+*.fsproj text eol=crlf
+*.dbproj text eol=crlf
