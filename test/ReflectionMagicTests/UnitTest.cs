@@ -65,7 +65,7 @@ namespace ReflectionMagicTests
         [Fact]
         public void TestMissingProperty()
         {
-            Assert.Throws<ArgumentException>(() => dynamicFoo.NotExist = "Hello");
+            Assert.Throws<MissingMemberException>(() => dynamicFoo.NotExist = "Hello");
         }
 
         [Fact]
