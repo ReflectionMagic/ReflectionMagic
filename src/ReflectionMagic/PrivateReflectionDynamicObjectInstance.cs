@@ -7,7 +7,7 @@ namespace ReflectionMagic
 {
     public class PrivateReflectionDynamicObjectInstance : PrivateReflectionDynamicObjectBase
     {
-        private static readonly IDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new ConcurrentDictionary<Type, IDictionary<string, IProperty>>();
+        private static readonly ConcurrentDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new ConcurrentDictionary<Type, IDictionary<string, IProperty>>();
 
         private readonly object _instance;
 
@@ -24,7 +24,7 @@ namespace ReflectionMagic
             _instance = instance;
         }
 
-        internal override IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType => _propertiesOnType;
+        protected override IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType => _propertiesOnType;
 
         // For instance calls, we get the type from the instance
         protected override Type TargetType => _instance.GetType();

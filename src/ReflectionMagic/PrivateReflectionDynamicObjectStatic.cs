@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -8,9 +9,7 @@ namespace ReflectionMagic
 {
     public class PrivateReflectionDynamicObjectStatic : PrivateReflectionDynamicObjectBase
     {
-        private static readonly IDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new ConcurrentDictionary<Type, IDictionary<string, IProperty>>();
-
-        private readonly Type _type;
+        private static readonly ConcurrentDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new ConcurrentDictionary<Type, IDictionary<string, IProperty>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PrivateReflectionDynamicObjectStatic"/> class, wrapping the specified type.
@@ -22,13 +21,13 @@ namespace ReflectionMagic
             if(type == null)
                 throw new ArgumentNullException(nameof(type));
 
-            _type = type;
+            TargetType = type;
         }
 
-        internal override IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType => _propertiesOnType;
+        protected override IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType => _propertiesOnType;
 
         // For static calls, we have the type and the instance is always null
-        protected override Type TargetType => _type;
+        protected override Type TargetType { get; }
 
         protected override object Instance => null;
 
@@ -38,6 +37,8 @@ namespace ReflectionMagic
 
         public dynamic New(params object[] args)
         {
+            Debug.Assert(args != null);
+
 #if NET45
             return Activator.CreateInstance(TargetType, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, args, null).AsDynamic();
 #else
@@ -52,7 +53,7 @@ namespace ReflectionMagic
                              select t.Invoke(args)).SingleOrDefault();
 
             if (result == null)
-                throw new MissingMethodException("Constructor not found.");
+                throw new MissingMethodException($"Constructor that accepts parameters: '{string.Join(", ", argumentTypes.Select(x => x.ToString()))}' not found.");
 
             return result.AsDynamic();
 #endif

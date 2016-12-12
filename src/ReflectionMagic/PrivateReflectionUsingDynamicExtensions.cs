@@ -43,6 +43,9 @@ namespace ReflectionMagic
         /// <seealso cref="AsDynamicType"/>
         public static dynamic GetDynamicType(this Assembly assembly, string typeName)
         {
+            if(assembly == null)
+                throw new ArgumentNullException(nameof(assembly));
+
             return assembly.GetType(typeName).AsDynamicType();
         }
 
@@ -56,6 +59,9 @@ namespace ReflectionMagic
         /// <exception cref="MissingMethodException">Thrown when no suitable constructor can be found.</exception>
         public static dynamic CreateDynamicInstance(this Assembly assembly, string typeName, params object[] args)
         {
+            if(args == null)
+                throw new ArgumentNullException(nameof(args));
+
             return assembly.GetDynamicType(typeName).New(args);
         }
     }

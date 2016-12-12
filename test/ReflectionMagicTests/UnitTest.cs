@@ -185,15 +185,6 @@ namespace ReflectionMagicTests
         }
 
         [Fact]
-        public void TestAsDynamicIdempotent()
-        {
-            var obj = (new object()).AsDynamic();
-
-            // Make sure AsDynamic is idempotent
-            Assert.Equal(obj, ((object)obj).AsDynamic());
-        }
-
-        [Fact]
         public void TestGenericMethod()
         {
             var result = dynamicFoo.SomeGenericMethod<string>("test");
