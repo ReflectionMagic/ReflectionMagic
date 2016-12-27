@@ -246,7 +246,7 @@ namespace ReflectionMagic
             }
 
             if (method == null)
-                throw new MissingMethodException($"Method with name '{name}' not found on type '{type.Name}'.");
+                throw new MissingMethodException($"Method with name '{name}' not found on type '{type.FullName}'.");
 
             if (typeArgs.Count > 0)
             {

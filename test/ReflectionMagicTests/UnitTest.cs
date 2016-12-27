@@ -69,6 +69,14 @@ namespace ReflectionMagicTests
         }
 
         [Fact]
+        public void TestMissingMethod()
+        {
+            var exception = Assert.Throws<MissingMethodException>(() => dynamicFoo.NotExist());
+
+            Assert.Contains("NotExist", exception.Message);
+        }
+
+        [Fact]
         public void FactCalls()
         {
             dynamicFoo.SomeInternalInteger = 17;
