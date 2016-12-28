@@ -182,6 +182,7 @@ namespace ReflectionMagic
 
         private static bool ParametersCompatible(MethodInfo method, object[] params2, IList<Type> typeArgs)
         {
+            Debug.Assert(method != null);
             Debug.Assert(params2 != null);
             Debug.Assert(typeArgs != null);
 
@@ -215,6 +216,7 @@ namespace ReflectionMagic
 
         private static object InvokeMethodOnType(Type type, object target, string name, object[] args, IList<Type> typeArgs)
         {
+            Debug.Assert(type != null);
             Debug.Assert(args != null);
             Debug.Assert(typeArgs != null);
 

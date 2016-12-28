@@ -37,7 +37,10 @@ namespace ReflectionMagic
 
         public dynamic New(params object[] args)
         {
-            Debug.Assert(args != null);
+            if(args == null)
+                throw new ArgumentNullException(nameof(args));
+
+            Debug.Assert(TargetType != null);
 
 #if NET45
             return Activator.CreateInstance(TargetType, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, args, null).AsDynamic();
