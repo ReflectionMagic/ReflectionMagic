@@ -1,23 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8F82B878-92C3-4982-9C7B-9F877352010D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EFD11FC-DE26-4864-A678-B06E9C78463E}"
 	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
 		ReflectionMagic.snk = ReflectionMagic.snk
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ReflectionMagic", "src\ReflectionMagic\ReflectionMagic.xproj", "{3C576B3B-09A9-49A6-A698-5B693C0005CC}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{104DADBE-0311-418B-AC13-10E36B66EC1D}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ReflectionMagicTests", "test\ReflectionMagicTests\ReflectionMagicTests.xproj", "{BAED5E4B-82E7-4317-B835-9EE289A25923}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReflectionMagic", "src\ReflectionMagic\ReflectionMagic.csproj", "{3C576B3B-09A9-49A6-A698-5B693C0005CC}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "LibraryWithPrivateMembers", "test\LibraryWithPrivateMembers\LibraryWithPrivateMembers.xproj", "{AFAC595E-BB9A-42A6-88FD-750BC6454224}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReflectionMagicTests", "test\ReflectionMagicTests\ReflectionMagicTests.csproj", "{BAED5E4B-82E7-4317-B835-9EE289A25923}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryWithPrivateMembers", "test\LibraryWithPrivateMembers\LibraryWithPrivateMembers.csproj", "{AFAC595E-BB9A-42A6-88FD-750BC6454224}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
