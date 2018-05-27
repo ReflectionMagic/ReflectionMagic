@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace LibraryWithPrivateMembers
 {
@@ -68,6 +66,16 @@ namespace LibraryWithPrivateMembers
         private string ReturnTypeName(Type t)
         {
             return t.FullName;
+        }
+
+        private void AddTwoParametersWithOut(int a, int b, out int c)
+        {
+            c = a + b;
+        }
+
+        private void AddTwoRefParameters(ref int a, ref int b, ref int result)
+        {
+            result = a + b;
         }
 
         private Dictionary<string, string> _dict = new Dictionary<string, string>();
