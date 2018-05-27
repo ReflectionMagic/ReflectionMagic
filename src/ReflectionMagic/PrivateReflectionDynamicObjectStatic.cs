@@ -37,28 +37,52 @@ namespace ReflectionMagic
 
         public dynamic New(params object[] args)
         {
-            if(args == null)
+            if (args == null)
                 throw new ArgumentNullException(nameof(args));
 
             Debug.Assert(TargetType != null);
 
-#if NET45
-            return Activator.CreateInstance(TargetType, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, args, null).AsDynamic();
-#else
+#if NETSTANDARD1_5
             var constructors = TargetType.GetTypeInfo().GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            var argumentTypes = args.Select(x => x.GetType()).ToArray();
 
-            object result = (from t in constructors
-                             let parameters = t.GetParameters()
-                             let parameterTypes = parameters.Select(x => x.ParameterType)
-                             where parameters.Length == args.Length
-                             where parameterTypes.SequenceEqual(argumentTypes)
-                             select t.Invoke(args)).SingleOrDefault();
+            var argumentTypes = new Type[args.Length];
+            for (int i = 0; i < args.Length; ++i)
+            {
+                argumentTypes[i] = args[i].GetType();
+            }
+
+            object result = null;
+            for (int i = 0; i < constructors.Length; ++i)
+            {
+                var constructor = constructors[i];
+                var parameters = constructor.GetParameters();
+
+                if (parameters.Length == argumentTypes.Length)
+                {
+                    bool found = true;
+                    for (int j = 0; j < argumentTypes.Length; ++j)
+                    {
+                        if (parameters[j].ParameterType != argumentTypes[j])
+                        {
+                            found = false;
+                            break;
+                        }
+                    }
+
+                    if (found)
+                    {
+                        result = constructor.Invoke(args);
+                        break;
+                    }
+                }
+            }
 
             if (result == null)
                 throw new MissingMethodException($"Constructor that accepts parameters: '{string.Join(", ", argumentTypes.Select(x => x.ToString()))}' not found.");
 
             return result.AsDynamic();
+#else
+            return Activator.CreateInstance(TargetType, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, args, null).AsDynamic();
 #endif
         }
     }
