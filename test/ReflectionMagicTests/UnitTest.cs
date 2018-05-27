@@ -1,9 +1,9 @@
-﻿using System;
-using System.Reflection;
-using LibraryWithPrivateMembers;
-using Xunit;
+﻿using LibraryWithPrivateMembers;
 using ReflectionMagic;
+using System;
 using System.Linq;
+using System.Reflection;
+using Xunit;
 
 namespace ReflectionMagicTests
 {
@@ -203,24 +203,54 @@ namespace ReflectionMagicTests
         public void MethodWithNoPrimitiveResult()
         {
             var result = (Exception)dynamicFoo.SomeMethodWithNoPrimitiveResult();
+
+            Assert.NotNull(result);
         }
+
+#if !NETCOREAPP1_0 && !NETCOREAPP1_1
+        [Fact]
+        public void TestAddingByRef()
+        {
+            int a = 127;
+            int b = 128;
+            int c = 0;
+
+            dynamicFoo.AddTwoRefParameters(ref a, ref b, ref c);
+
+            Assert.Equal(255, c);
+        }
+
+        [Fact]
+        public void TestAddingByOut()
+        {
+            int a = 127;
+            int b = 110;
+
+            dynamicFoo.AddTwoParametersWithOut(a, b, out int c);
+
+            Assert.Equal(237, c);
+        }
+#endif
 
         [Fact]
         public void TestFieldsAndProperties()
         {
             var fooBar = new FooBar();
+
+#pragma warning disable CS0618 // Type or member is obsolete
             var properties = typeof(FooBar).GetProperties().Select(pi => pi.ToIProperty())
                                  .Union(
                              typeof(FooBar).GetFields().Select(fi => fi.ToIProperty()));
+#pragma warning restore CS0618 // Type or member is obsolete
 
             foreach (var property in properties)
             {
                 property.SetValue(fooBar, "test", null);
-                Assert.Equal(property.PropertyType, typeof(string));
+                Assert.Equal(typeof(string), property.PropertyType);
             }
 
-            Assert.Equal(fooBar._field, "test");
-            Assert.Equal(fooBar.Property, "test");
+            Assert.Equal("test", fooBar._field);
+            Assert.Equal("test", fooBar.Property);
         }
     }
 }

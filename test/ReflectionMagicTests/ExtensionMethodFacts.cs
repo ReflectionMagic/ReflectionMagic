@@ -1,5 +1,4 @@
-﻿using System;
-using ReflectionMagic;
+﻿using ReflectionMagic;
 using Xunit;
 
 namespace ReflectionMagicTests
@@ -69,7 +68,6 @@ namespace ReflectionMagicTests
 
                 Assert.Same(primitive, wrapped);
             }
-
         }
     }
 

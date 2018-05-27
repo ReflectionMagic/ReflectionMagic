@@ -178,10 +178,10 @@ namespace ReflectionMagic
             return typeProperties;
         }
 
-        private static bool ParametersCompatible(MethodInfo method, object[] params2, IList<Type> typeArgs)
+        private static bool ParametersCompatible(MethodInfo method, object[] passedArguments, IList<Type> typeArgs)
         {
             Debug.Assert(method != null);
-            Debug.Assert(params2 != null);
+            Debug.Assert(passedArguments != null);
             Debug.Assert(typeArgs != null);
 
             if (typeArgs.Count > 0)
@@ -189,23 +189,39 @@ namespace ReflectionMagic
                 method = method.MakeGenericMethod(typeArgs.ToArray());
             }
 
-            var params1 = method.GetParameters();
+            var parametersOnMethod = method.GetParameters();
 
-            if (params1.Length != params2.Length)
+            if (parametersOnMethod.Length != passedArguments.Length)
                 return false;
 
-            for (int i = 0; i < params1.Length; ++i)
+            for (int i = 0; i < parametersOnMethod.Length; ++i)
             {
-                if (params2[i] == null && params1[i].ParameterType.GetTypeInfo().IsValueType)
+                var parameterType = parametersOnMethod[i].ParameterType.GetTypeInfo();
+                var argument = passedArguments[i];
+                var argumentType = argument.GetType().GetTypeInfo();
+
+                if (argument == null && parameterType.IsValueType)
                 {
                     // Value types can not be null.
                     return false;
                 }
 
-                if (!params1[i].ParameterType.GetTypeInfo().IsInstanceOfType(params2[i]))
+                if (!parameterType.IsInstanceOfType(passedArguments[i]))
                 {
                     // Parameters should be instance of the parameter type.
-                    return false;
+                    if (parameterType.IsByRef)
+                    {
+                        // Handle parameters passed by ref
+                        var argumentByRefType = argumentType.MakeByRefType().GetTypeInfo();
+                        if (parameterType != argumentByRefType)
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
 
