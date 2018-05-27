@@ -22,7 +22,7 @@ namespace ReflectionMagic
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            if(binder == null)
+            if (binder == null)
                 throw new ArgumentNullException(nameof(binder));
 
             IProperty prop = GetProperty(binder.Name);
@@ -38,7 +38,7 @@ namespace ReflectionMagic
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            if(binder == null)
+            if (binder == null)
                 throw new ArgumentNullException(nameof(binder));
 
             IProperty prop = GetProperty(binder.Name);
@@ -127,8 +127,7 @@ namespace ReflectionMagic
             IDictionary<string, IProperty> typeProperties = GetTypeProperties(TargetType);
 
             // Look for the one we want
-            IProperty property;
-            if (typeProperties.TryGetValue(propertyName, out property))
+            if (typeProperties.TryGetValue(propertyName, out IProperty property))
                 return property;
 
             // The property doesn't exist
@@ -144,8 +143,7 @@ namespace ReflectionMagic
         private IDictionary<string, IProperty> GetTypeProperties(Type type)
         {
             // First, check if we already have it cached
-            IDictionary<string, IProperty> typeProperties;
-            if (PropertiesOnType.TryGetValue(type, out typeProperties))
+            if (PropertiesOnType.TryGetValue(type, out IDictionary<string, IProperty> typeProperties))
                 return typeProperties;
 
             // Not cached, so we need to build it
@@ -163,14 +161,14 @@ namespace ReflectionMagic
             // Then, add all the properties from the current type
             foreach (PropertyInfo prop in type.GetTypeInfo().GetProperties(BindingFlags))
             {
-                if(prop.DeclaringType == type)
+                if (prop.DeclaringType == type)
                     typeProperties[prop.Name] = new Property(prop);
             }
 
             // Finally, add all the fields from the current type
             foreach (FieldInfo field in type.GetTypeInfo().GetFields(BindingFlags))
             {
-                if(field.DeclaringType == type)
+                if (field.DeclaringType == type)
                     typeProperties[field.Name] = new Field(field);
             }
 
@@ -260,10 +258,8 @@ namespace ReflectionMagic
 
         private static object Unwrap(object o)
         {
-            var wrappedObj = o as PrivateReflectionDynamicObjectBase;
-
             // If it's a wrap object, unwrap it and return the real thing
-            if (wrappedObj != null)
+            if (o is PrivateReflectionDynamicObjectBase wrappedObj)
                 return wrappedObj.RealObject;
 
             // Otherwise, return it unchanged

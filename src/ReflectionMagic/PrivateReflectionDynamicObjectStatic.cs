@@ -18,10 +18,7 @@ namespace ReflectionMagic
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="type"/> is <c>null</c>.</exception>
         public PrivateReflectionDynamicObjectStatic(Type type)
         {
-            if(type == null)
-                throw new ArgumentNullException(nameof(type));
-
-            TargetType = type;
+            TargetType = type ?? throw new ArgumentNullException(nameof(type));
         }
 
         protected override IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType => _propertiesOnType;
