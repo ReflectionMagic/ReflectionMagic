@@ -45,24 +45,18 @@ namespace ReflectionMagic
 #if NETSTANDARD1_5
             var constructors = TargetType.GetTypeInfo().GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-            var argumentTypes = new Type[args.Length];
-            for (int i = 0; i < args.Length; ++i)
-            {
-                argumentTypes[i] = args[i].GetType();
-            }
-
             object result = null;
             for (int i = 0; i < constructors.Length; ++i)
             {
                 var constructor = constructors[i];
                 var parameters = constructor.GetParameters();
 
-                if (parameters.Length == argumentTypes.Length)
+                if (parameters.Length == args.Length)
                 {
                     bool found = true;
-                    for (int j = 0; j < argumentTypes.Length; ++j)
+                    for (int j = 0; j < args.Length; ++j)
                     {
-                        if (parameters[j].ParameterType != argumentTypes[j])
+                        if (parameters[j].ParameterType != args[j].GetType())
                         {
                             found = false;
                             break;
@@ -78,7 +72,7 @@ namespace ReflectionMagic
             }
 
             if (result == null)
-                throw new MissingMethodException($"Constructor that accepts parameters: '{string.Join(", ", argumentTypes.Select(x => x.ToString()))}' not found.");
+                throw new MissingMethodException($"Constructor that accepts parameters: '{string.Join(", ", args.Select(x => x.GetType().ToString()))}' not found.");
 
             return result.AsDynamic();
 #else
