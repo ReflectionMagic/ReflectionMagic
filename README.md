@@ -51,3 +51,6 @@ string val = foo1.AsDynamic().GetOtherClass().SomeProp;
 ## More info
 
 For more information look at the original blog post by David Ebbo: https://blogs.msdn.microsoft.com/davidebb/2010/01/18/use-c-4-0-dynamic-to-drastically-simplify-your-private-reflection-code/
+
+## Known limitations
+* Support for 'out' and 'ref' parameters is not available on .NET Core 1.x runtimes. This is a runtime limitation and results in a PlatformNotSupportedException.
