@@ -9,6 +9,10 @@ namespace ReflectionMagic
 {
     public abstract class PrivateReflectionDynamicObjectBase : DynamicObject
     {
+#if NET45
+        private static readonly Type[] _emptyTypes = new Type[0];
+#endif
+
         // We need to virtualize this so we use a different cache for instance and static props
         protected abstract IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType { get; }
 
@@ -87,8 +91,7 @@ namespace ReflectionMagic
                 args[i] = Unwrap(args[i]);
             }
 
-            var csharpBinder = binder.GetType().GetTypeInfo().GetInterface("Microsoft.CSharp.RuntimeBinder.ICSharpInvokeOrInvokeMemberBinder");
-            var typeArgs = (IList<Type>)csharpBinder.GetTypeInfo().GetProperty("TypeArguments").GetValue(binder, null);
+            var typeArgs = GetGenericMethodArguments(binder);
 
             result = InvokeMethodOnType(TargetType, Instance, binder.Name, args, typeArgs);
 
@@ -178,16 +181,10 @@ namespace ReflectionMagic
             return typeProperties;
         }
 
-        private static bool ParametersCompatible(MethodInfo method, object[] passedArguments, IList<Type> typeArgs)
+        private static bool ParametersCompatible(MethodInfo method, object[] passedArguments)
         {
             Debug.Assert(method != null);
             Debug.Assert(passedArguments != null);
-            Debug.Assert(typeArgs != null);
-
-            if (typeArgs.Count > 0)
-            {
-                method = method.MakeGenericMethod(typeArgs.ToArray());
-            }
 
             var parametersOnMethod = method.GetParameters();
 
@@ -228,7 +225,7 @@ namespace ReflectionMagic
             return true;
         }
 
-        private static object InvokeMethodOnType(Type type, object target, string name, object[] args, IList<Type> typeArgs)
+        private static object InvokeMethodOnType(Type type, object target, string name, object[] args, Type[] typeArgs)
         {
             Debug.Assert(type != null);
             Debug.Assert(args != null);
@@ -245,12 +242,23 @@ namespace ReflectionMagic
             {
                 var methods = currentType.GetTypeInfo().GetMethods(allMethods);
 
-                foreach (var m in methods)
+                MethodInfo candidate;
+                for (int i = 0; i < methods.Length; ++i)
                 {
-                    if (m.Name == name && ParametersCompatible(m, args, typeArgs))
+                    candidate = methods[i];
+
+                    if (candidate.Name == name)
                     {
-                        method = m;
-                        break;
+                        if (typeArgs.Length > 0)
+                        {
+                            candidate = candidate.MakeGenericMethod(typeArgs);
+                        }
+
+                        if (ParametersCompatible(candidate, args))
+                        {
+                            method = candidate;
+                            break;
+                        }
                     }
                 }
 
@@ -264,11 +272,6 @@ namespace ReflectionMagic
             if (method == null)
                 throw new MissingMethodException($"Method with name '{name}' not found on type '{type.FullName}'.");
 
-            if (typeArgs.Count > 0)
-            {
-                method = method.MakeGenericMethod(typeArgs.ToArray());
-            }
-
             return method.Invoke(target, args);
         }
 
@@ -280,6 +283,22 @@ namespace ReflectionMagic
 
             // Otherwise, return it unchanged
             return o;
+        }
+
+        private static Type[] GetGenericMethodArguments(InvokeMemberBinder binder)
+        {
+            var csharpBinder = binder.GetType().GetTypeInfo().GetInterface("Microsoft.CSharp.RuntimeBinder.ICSharpInvokeOrInvokeMemberBinder");
+            var typeArgsList = (IList<Type>)csharpBinder.GetTypeInfo().GetProperty("TypeArguments").GetValue(binder, null);
+
+            var typeArgs = typeArgsList.Count == 0 ?
+#if NET45
+            _emptyTypes
+#else
+            Array.Empty<Type>()
+#endif
+            : typeArgsList.ToArray();
+
+            return typeArgs;
         }
     }
 }
