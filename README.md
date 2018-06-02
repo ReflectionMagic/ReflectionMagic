@@ -1,6 +1,4 @@
 # ReflectionMagic
-[![Build status icon](https://teamcity.vandertil.net/app/rest/builds/buildType:(id:PublicProjects_ReflectionMagic_CI)/statusIcon)](https://teamcity.vandertil.net/viewLog.html?buildTypeId=PublicProjects_ReflectionMagic_CI&buildId=lastFinished)
-
 Private reflection allows you to access private and internal members in other assemblies.  Generally, it’s considered to be a bad thing to do, as it ties you to undocumented implementation details which can later break you.  Also, it’s not usable in medium trust.
 
 The purpose of this library is not to encourage anyone to use private reflection in situations where you would not have done it anyway.  Instead, the purpose is to allow you to do it much more easily if you decide that you need to use it. 
@@ -53,4 +51,4 @@ string val = foo1.AsDynamic().GetOtherClass().SomeProp;
 For more information look at the original blog post by David Ebbo: https://blogs.msdn.microsoft.com/davidebb/2010/01/18/use-c-4-0-dynamic-to-drastically-simplify-your-private-reflection-code/
 
 ## Known limitations
-* Support for 'out' and 'ref' parameters is not available on .NET Core 1.x runtimes. This is a runtime limitation and results in a PlatformNotSupportedException.
+Support for 'out' and 'ref' parameters is not available on .NET Core 1.x runtimes. This is a runtime limitation and results in a PlatformNotSupportedException.
