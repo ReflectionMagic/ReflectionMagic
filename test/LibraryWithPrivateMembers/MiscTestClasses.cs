@@ -96,6 +96,11 @@ namespace LibraryWithPrivateMembers
             return value;
         }
 
+        private T2 SomeGenericMethod<T, T2>(T value, T2 value2)
+        {
+            return value2;
+        }
+
         private Exception SomeMethodWithNoPrimitiveResult()
         {
             return new Exception();

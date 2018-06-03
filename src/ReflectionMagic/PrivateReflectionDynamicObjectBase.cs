@@ -165,14 +165,18 @@ namespace ReflectionMagic
             foreach (PropertyInfo prop in type.GetTypeInfo().GetProperties(BindingFlags))
             {
                 if (prop.DeclaringType == type)
+                {
                     typeProperties[prop.Name] = new Property(prop);
+                }
             }
 
             // Finally, add all the fields from the current type
             foreach (FieldInfo field in type.GetTypeInfo().GetFields(BindingFlags))
             {
                 if (field.DeclaringType == type)
+                {
                     typeProperties[field.Name] = new Field(field);
+                }
             }
 
             // Cache it for next time
@@ -249,9 +253,14 @@ namespace ReflectionMagic
 
                     if (candidate.Name == name)
                     {
-                        if (typeArgs.Length > 0)
+                        // Check if the method is called as a generic method.
+                        if (typeArgs.Length > 0 && candidate.ContainsGenericParameters)
                         {
-                            candidate = candidate.MakeGenericMethod(typeArgs);
+                            var candidateTypeArgs = candidate.GetGenericArguments();
+                            if (candidateTypeArgs.Length == typeArgs.Length)
+                            {
+                                candidate = candidate.MakeGenericMethod(typeArgs);
+                            }
                         }
 
                         if (ParametersCompatible(candidate, args))
@@ -270,7 +279,9 @@ namespace ReflectionMagic
             }
 
             if (method == null)
+            {
                 throw new MissingMethodException($"Method with name '{name}' not found on type '{type.FullName}'.");
+            }
 
             return method.Invoke(target, args);
         }
@@ -287,16 +298,26 @@ namespace ReflectionMagic
 
         private static Type[] GetGenericMethodArguments(InvokeMemberBinder binder)
         {
-            var csharpBinder = binder.GetType().GetTypeInfo().GetInterface("Microsoft.CSharp.RuntimeBinder.ICSharpInvokeOrInvokeMemberBinder");
-            var typeArgsList = (IList<Type>)csharpBinder.GetTypeInfo().GetProperty("TypeArguments").GetValue(binder, null);
+            var csharpInvokeMemberBinderType = binder
+                    .GetType().GetTypeInfo()
+                    .GetInterface("Microsoft.CSharp.RuntimeBinder.ICSharpInvokeOrInvokeMemberBinder")
+                    .GetTypeInfo();
 
-            var typeArgs = typeArgsList.Count == 0 ?
+            var typeArgsList = (IList<Type>)csharpInvokeMemberBinderType.GetProperty("TypeArguments").GetValue(binder, null);
+
+            Type[] typeArgs;
+            if (typeArgsList.Count == 0)
+            {
 #if NET45
-            _emptyTypes
+                typeArgs = _emptyTypes;
 #else
-            Array.Empty<Type>()
+                typeArgs = Array.Empty<Type>();
 #endif
-            : typeArgsList.ToArray();
+            }
+            else
+            {
+                typeArgs = typeArgsList.ToArray();
+            }
 
             return typeArgs;
         }
