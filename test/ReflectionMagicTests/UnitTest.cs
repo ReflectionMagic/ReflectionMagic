@@ -200,6 +200,13 @@ namespace ReflectionMagicTests
         }
 
         [Fact]
+        public void TestGenericMethodWithTwoArguments()
+        {
+            var result = dynamicFoo.SomeGenericMethod<string, int>("test", 1234);
+            Assert.Equal(1234, result);
+        }
+
+        [Fact]
         public void MethodWithNoPrimitiveResult()
         {
             var result = (Exception)dynamicFoo.SomeMethodWithNoPrimitiveResult();
