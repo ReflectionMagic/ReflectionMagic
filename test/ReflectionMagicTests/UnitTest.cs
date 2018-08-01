@@ -214,6 +214,22 @@ namespace ReflectionMagicTests
             Assert.NotNull(result);
         }
 
+        [Fact]
+        public void NullToGenericMethod()
+        {
+            var result = dynamicFoo.SomeGenericMethod<string>(null);
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void TestNullToMethod()
+        {
+            var result = dynamicFoo.SomeMethod(null);
+
+            Assert.Null(result);
+        }
+
 #if !NETCOREAPP1_0 && !NETCOREAPP1_1
         [Fact]
         public void TestAddingByRef()

@@ -91,6 +91,11 @@ namespace LibraryWithPrivateMembers
             }
         }
 
+        private object SomeMethod(object obj)
+        {
+            return obj;
+        }
+
         private T SomeGenericMethod<T>(T value)
         {
             return value;

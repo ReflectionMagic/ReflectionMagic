@@ -199,7 +199,6 @@ namespace ReflectionMagic
             {
                 var parameterType = parametersOnMethod[i].ParameterType.GetTypeInfo();
                 var argument = passedArguments[i];
-                var argumentType = argument.GetType().GetTypeInfo();
 
                 if (argument == null && parameterType.IsValueType)
                 {
@@ -207,12 +206,18 @@ namespace ReflectionMagic
                     return false;
                 }
 
-                if (!parameterType.IsInstanceOfType(passedArguments[i]))
+                if (!parameterType.IsInstanceOfType(argument))
                 {
+                    if (argument == null)
+                    {
+                        continue;
+                    }
+
                     // Parameters should be instance of the parameter type.
                     if (parameterType.IsByRef)
                     {
                         // Handle parameters passed by ref
+                        var argumentType = argument.GetType().GetTypeInfo();
                         var argumentByRefType = argumentType.MakeByRefType().GetTypeInfo();
                         if (parameterType != argumentByRefType)
                         {
