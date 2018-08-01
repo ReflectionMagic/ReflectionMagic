@@ -68,6 +68,11 @@ namespace LibraryWithPrivateMembers
             return t.FullName;
         }
 
+        private object ReturnRefObject(ref object reffed)
+        {
+            return reffed;
+        }
+
         private void AddTwoParametersWithOut(int a, int b, out int c)
         {
             c = a + b;

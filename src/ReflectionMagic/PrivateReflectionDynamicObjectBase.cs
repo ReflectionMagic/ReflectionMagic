@@ -198,7 +198,7 @@ namespace ReflectionMagic
             for (int i = 0; i < parametersOnMethod.Length; ++i)
             {
                 var parameterType = parametersOnMethod[i].ParameterType.GetTypeInfo();
-                var argument = passedArguments[i];
+                ref var argument = ref passedArguments[i];
 
                 if (argument == null && parameterType.IsValueType)
                 {
@@ -221,7 +221,14 @@ namespace ReflectionMagic
                         var argumentByRefType = argumentType.MakeByRefType().GetTypeInfo();
                         if (parameterType != argumentByRefType)
                         {
-                            return false;
+                            try
+                            {
+                                argument = Convert.ChangeType(argument, parameterType.GetElementType());
+                            }
+                            catch (InvalidCastException)
+                            {
+                                return false;
+                            }
                         }
                     }
                     else

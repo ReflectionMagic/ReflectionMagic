@@ -253,6 +253,26 @@ namespace ReflectionMagicTests
 
             Assert.Equal(237, c);
         }
+
+        [Fact]
+        public void TestRefArgument()
+        {
+            object obj = "Test thingie";
+
+            var returned = dynamicFoo.ReturnRefObject(ref obj);
+
+            Assert.Equal(obj, returned);
+        }
+
+        [Fact]
+        public void TestRefNullArgument()
+        {
+            object obj = null;
+
+            var returned = dynamicFoo.ReturnRefObject(ref obj);
+
+            Assert.Null(returned);
+        }
 #endif
 
         [Fact]
