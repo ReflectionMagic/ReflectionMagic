@@ -25,7 +25,7 @@
     <PackageId>ReflectionMagic</PackageId>
     <PackageTags>dynamic</PackageTags>
     <PackageProjectUrl>https://github.com/davidebbo/ReflectionMagic</PackageProjectUrl>
-    <PackageLicenseUrl>http://www.opensource.org/licenses/ms-pl</PackageLicenseUrl>
+    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
 
     <Description>Framework to drastically simplify your private reflection code using C# dynamic</Description>
     <Authors>David Ebbo</Authors>
