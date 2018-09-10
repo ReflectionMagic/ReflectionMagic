@@ -208,28 +208,38 @@ namespace ReflectionMagic
 
                 if (!parameterType.IsInstanceOfType(argument))
                 {
-                    if (argument == null)
-                    {
-                        continue;
-                    }
-
                     // Parameters should be instance of the parameter type.
                     if (parameterType.IsByRef)
                     {
-                        // Handle parameters passed by ref
-                        var argumentType = argument.GetType().GetTypeInfo();
-                        var argumentByRefType = argumentType.MakeByRefType().GetTypeInfo();
-                        if (parameterType != argumentByRefType)
+                        var typePassedByRef = parameterType.GetElementType().GetTypeInfo();
+
+                        Debug.Assert(typePassedByRef != null);
+
+                        if (typePassedByRef.IsValueType && argument == null)
                         {
-                            try
+                            return false;
+                        }
+
+                        if (argument != null)
+                        {
+                            var argumentType = argument.GetType().GetTypeInfo();
+                            var argumentByRefType = argumentType.MakeByRefType().GetTypeInfo();
+                            if (parameterType != argumentByRefType)
                             {
-                                argument = Convert.ChangeType(argument, parameterType.GetElementType());
-                            }
-                            catch (InvalidCastException)
-                            {
-                                return false;
+                                try
+                                {
+                                    argument = Convert.ChangeType(argument, typePassedByRef.AsType());
+                                }
+                                catch (InvalidCastException)
+                                {
+                                    return false;
+                                }
                             }
                         }
+                    }
+                    else if (argument == null)
+                    {
+                        continue;
                     }
                     else
                     {

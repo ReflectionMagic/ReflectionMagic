@@ -273,6 +273,16 @@ namespace ReflectionMagicTests
 
             Assert.Null(returned);
         }
+
+        [Fact]
+        public void TestPassNullToValueTypeRefParameter()
+        {
+            object first = null;
+            int second = 2;
+            int third = 0;
+
+            Assert.Throws<MissingMethodException>(() => dynamicFoo.AddTwoRefParameters(ref first, ref second, ref third));
+        }
 #endif
 
         [Fact]
