@@ -1,4 +1,6 @@
 # ReflectionMagic
+[![Build Status](https://dev.azure.com/jvandertil/OpenSource/_apis/build/status/github/ReflectionMagic/ReflectionMagic/Continuous%20Integration?branchName=master)](https://dev.azure.com/jvandertil/OpenSource/_build/latest?definitionId=3&branchName=master)
+
 Private reflection allows you to access private and internal members in other assemblies.  Generally, it’s considered to be a bad thing to do, as it ties you to undocumented implementation details which can later break you.  Also, it’s not usable in medium trust.
 
 The purpose of this library is not to encourage anyone to use private reflection in situations where you would not have done it anyway.  Instead, the purpose is to allow you to do it much more easily if you decide that you need to use it. 
