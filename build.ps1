@@ -1,5 +1,6 @@
 param (
     [string]$OutputDirectory = $PSScriptRoot,
+    [string]$TestResultOutputDirectory = (Join-Path $PSScriptRoot "TestResults"),
     [string]$VersionSuffix = "local",
     [string]$BuildConfiguration = "Release"
 )
@@ -31,5 +32,5 @@ function Exec
 exec { & dotnet clean -c $BuildConfiguration }
 exec { & dotnet restore }
 exec { & dotnet build -c $BuildConfiguration /p:VersionSuffix="$VersionSuffix" }
-exec { & dotnet test --no-build --verbosity=normal -c $BuildConfiguration test/ReflectionMagicTests/ReflectionMagicTests.csproj }
+exec { & dotnet test -r $TestResultOutputDirectory -l trx --no-build --verbosity=normal -c $BuildConfiguration test/ReflectionMagicTests/ReflectionMagicTests.csproj }
 exec { & dotnet pack --no-build /p:VersionSuffix="$VersionSuffix" -c $BuildConfiguration -o $OutputDirectory --include-symbols src/ReflectionMagic }
