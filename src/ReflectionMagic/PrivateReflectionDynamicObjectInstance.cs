@@ -28,6 +28,9 @@ namespace ReflectionMagic
 
         protected override object Instance => _instance;
 
+        /// <summary>
+        /// The object that the <see cref="PrivateReflectionDynamicObjectInstance"/> wraps.
+        /// </summary>
         public override object RealObject => Instance;
 
         protected override BindingFlags BindingFlags => BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;

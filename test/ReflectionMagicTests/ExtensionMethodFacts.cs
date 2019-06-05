@@ -1,4 +1,7 @@
 ﻿using ReflectionMagic;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace ReflectionMagicTests
@@ -7,6 +10,17 @@ namespace ReflectionMagicTests
     {
         public class TheAsDynamicMethod
         {
+            public static IEnumerable<object[]> PrimitiveValues = (new object[]
+            {
+                (int)1,
+                (uint)1,
+                (long)1,
+                (byte)1,
+                (double)1,
+                (char)'a',
+                (bool)true,
+            }).Select(value => new object[] { value });
+
             [Fact]
             public void Should_WrapObjects()
             {
@@ -56,17 +70,42 @@ namespace ReflectionMagicTests
             }
 
             [Theory]
-            [InlineData(0)]
-            [InlineData(0.0F)]
-            [InlineData(0.0D)]
-            [InlineData(0U)]
-            [InlineData(0L)]
-            // TODO: Maybe add some more examples of primitive types here.
+            [MemberData(nameof(PrimitiveValues))]
             public void Should_NotWrapPrimitiveTypes(object primitive)
             {
                 object wrapped = primitive.AsDynamic();
 
                 Assert.Same(primitive, wrapped);
+            }
+
+            [Fact]
+            public void Should_UnwrapObjects()
+            {
+                object obj = new object();
+                dynamic wrapped = obj.AsDynamic();
+                object unwrapped = PrivateReflectionUsingDynamicExtensions.Unwrap(wrapped);
+
+                Assert.Same(unwrapped, obj);
+            }
+
+            [Fact]
+            public void Should_UnwrapStructs()
+            {
+                var @struct = Guid.NewGuid();
+                var wrapped = @struct.AsDynamic();
+                object unwrapped = PrivateReflectionUsingDynamicExtensions.Unwrap(wrapped);
+
+                Assert.Equal(unwrapped, @struct);
+            }
+
+            [Theory]
+            [MemberData(nameof(PrimitiveValues))]
+            public void Should_UnwrapPrimitiveTypes(object primitive)
+            {
+                dynamic wrapped = primitive.AsDynamic();
+                object unwrapped = PrivateReflectionUsingDynamicExtensions.Unwrap(wrapped);
+
+                Assert.Equal(unwrapped, primitive);
             }
         }
     }
