@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
+using static ReflectionMagic.PrivateReflectionUsingDynamicExtensions;
 
 namespace ReflectionMagic
 {
@@ -306,16 +307,6 @@ namespace ReflectionMagic
             }
 
             return method.Invoke(target, args);
-        }
-
-        private static object Unwrap(object o)
-        {
-            // If it's a wrap object, unwrap it and return the real thing
-            if (o is PrivateReflectionDynamicObjectBase wrappedObj)
-                return wrappedObj.RealObject;
-
-            // Otherwise, return it unchanged
-            return o;
         }
 
         private static Type[] GetGenericMethodArguments(InvokeMemberBinder binder)

@@ -28,6 +28,9 @@ namespace ReflectionMagic
 
         protected override object Instance => null;
 
+        /// <summary>
+        /// The type that the <see cref="PrivateReflectionDynamicObjectStatic"/> wraps.
+        /// </summary>
         public override object RealObject => TargetType;
 
         protected override BindingFlags BindingFlags => BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
