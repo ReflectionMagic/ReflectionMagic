@@ -83,7 +83,7 @@ namespace ReflectionMagicTests
             {
                 object obj = new object();
                 dynamic wrapped = obj.AsDynamic();
-                object unwrapped = PrivateReflectionUsingDynamicExtensions.Unwrap(wrapped);
+                object unwrapped = DynamicHelper.Unwrap(wrapped);
 
                 Assert.Same(unwrapped, obj);
             }
@@ -93,7 +93,7 @@ namespace ReflectionMagicTests
             {
                 var @struct = Guid.NewGuid();
                 var wrapped = @struct.AsDynamic();
-                object unwrapped = PrivateReflectionUsingDynamicExtensions.Unwrap(wrapped);
+                object unwrapped = DynamicHelper.Unwrap(wrapped);
 
                 Assert.Equal(unwrapped, @struct);
             }
@@ -103,7 +103,7 @@ namespace ReflectionMagicTests
             public void Should_UnwrapPrimitiveTypes(object primitive)
             {
                 dynamic wrapped = primitive.AsDynamic();
-                object unwrapped = PrivateReflectionUsingDynamicExtensions.Unwrap(wrapped);
+                object unwrapped = DynamicHelper.Unwrap(wrapped);
 
                 Assert.Equal(unwrapped, primitive);
             }

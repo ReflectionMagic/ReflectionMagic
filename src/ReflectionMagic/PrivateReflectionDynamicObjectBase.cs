@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using static ReflectionMagic.PrivateReflectionUsingDynamicExtensions;
 
 namespace ReflectionMagic
 {
@@ -49,7 +48,7 @@ namespace ReflectionMagic
             IProperty prop = GetProperty(binder.Name);
 
             // Set the property value.  Make sure to unwrap it first if it's one of our dynamic objects
-            prop.SetValue(Instance, Unwrap(value), index: null);
+            prop.SetValue(Instance, DynamicHelper.Unwrap(value), index: null);
 
             return true;
         }
@@ -74,7 +73,7 @@ namespace ReflectionMagic
                 throw new ArgumentNullException(nameof(binder));
 
             IProperty prop = GetIndexProperty();
-            prop.SetValue(Instance, Unwrap(value), indexes);
+            prop.SetValue(Instance, DynamicHelper.Unwrap(value), indexes);
 
             return true;
         }
@@ -89,7 +88,7 @@ namespace ReflectionMagic
 
             for (int i = 0; i < args.Length; i++)
             {
-                args[i] = Unwrap(args[i]);
+                args[i] = DynamicHelper.Unwrap(args[i]);
             }
 
             var typeArgs = GetGenericMethodArguments(binder);
