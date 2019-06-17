@@ -17,7 +17,7 @@ namespace ReflectionMagic
         public static dynamic AsDynamic(this object o)
         {
             // Don't wrap primitive types, which don't have many interesting internal APIs
-            if (o == null || o.GetType().GetTypeInfo().IsPrimitive || o is string || o is PrivateReflectionDynamicObjectBase)
+            if (o is null || o.GetType().GetTypeInfo().IsPrimitive || o is string || o is PrivateReflectionDynamicObjectBase)
                 return o;
 
             return new PrivateReflectionDynamicObjectInstance(o);
@@ -43,7 +43,7 @@ namespace ReflectionMagic
         /// <seealso cref="AsDynamicType"/>
         public static dynamic GetDynamicType(this Assembly assembly, string typeName)
         {
-            if(assembly == null)
+            if (assembly is null)
                 throw new ArgumentNullException(nameof(assembly));
 
             return assembly.GetType(typeName).AsDynamicType();
@@ -59,7 +59,7 @@ namespace ReflectionMagic
         /// <exception cref="MissingMethodException">Thrown when no suitable constructor can be found.</exception>
         public static dynamic CreateDynamicInstance(this Assembly assembly, string typeName, params object[] args)
         {
-            if(args == null)
+            if (args is null)
                 throw new ArgumentNullException(nameof(args));
 
             return assembly.GetDynamicType(typeName).New(args);

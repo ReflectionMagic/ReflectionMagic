@@ -37,7 +37,7 @@ namespace ReflectionMagic
 
         public dynamic New(params object[] args)
         {
-            if (args == null)
+            if (args is null)
                 throw new ArgumentNullException(nameof(args));
 
             Debug.Assert(TargetType != null);
@@ -71,7 +71,7 @@ namespace ReflectionMagic
                 }
             }
 
-            if (result == null)
+            if (result is null)
                 throw new MissingMethodException($"Constructor that accepts parameters: '{string.Join(", ", args.Select(x => x.GetType().ToString()))}' not found.");
 
             return result.AsDynamic();

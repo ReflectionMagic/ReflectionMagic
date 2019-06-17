@@ -17,10 +17,7 @@ namespace ReflectionMagic
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="property"/> is <c>null</c>.</exception>
         internal Property(PropertyInfo property)
         {
-            if (property == null)
-                throw new ArgumentNullException(nameof(property));
-
-            _propertyInfo = property;
+            _propertyInfo = property ?? throw new ArgumentNullException(nameof(property));
         }
 
         public Type PropertyType => _propertyInfo.PropertyType;

@@ -26,7 +26,7 @@ namespace ReflectionMagic
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            if (binder == null)
+            if (binder is null)
                 throw new ArgumentNullException(nameof(binder));
 
             IProperty prop = GetProperty(binder.Name);
@@ -42,7 +42,7 @@ namespace ReflectionMagic
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            if (binder == null)
+            if (binder is null)
                 throw new ArgumentNullException(nameof(binder));
 
             IProperty prop = GetProperty(binder.Name);
@@ -55,7 +55,7 @@ namespace ReflectionMagic
 
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
         {
-            if (binder == null)
+            if (binder is null)
                 throw new ArgumentNullException(nameof(binder));
 
             IProperty prop = GetIndexProperty();
@@ -69,7 +69,7 @@ namespace ReflectionMagic
 
         public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
         {
-            if (binder == null)
+            if (binder is null)
                 throw new ArgumentNullException(nameof(binder));
 
             IProperty prop = GetIndexProperty();
@@ -80,10 +80,10 @@ namespace ReflectionMagic
 
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
-            if (binder == null)
+            if (binder is null)
                 throw new ArgumentNullException(nameof(binder));
 
-            if (args == null)
+            if (args is null)
                 throw new ArgumentNullException(nameof(args));
 
             for (int i = 0; i < args.Length; i++)
@@ -103,7 +103,7 @@ namespace ReflectionMagic
 
         public override bool TryConvert(ConvertBinder binder, out object result)
         {
-            if (binder == null)
+            if (binder is null)
                 throw new ArgumentNullException(nameof(binder));
 
             result = binder.Type.GetTypeInfo().IsInstanceOfType(RealObject) ? RealObject : Convert.ChangeType(RealObject, binder.Type);
@@ -153,7 +153,7 @@ namespace ReflectionMagic
             typeProperties = new Dictionary<string, IProperty>();
 
             // First, recurse on the base class to add its fields
-            if (type.GetTypeInfo().BaseType != null)
+            if (!(type.GetTypeInfo().BaseType is null))
             {
                 foreach (IProperty prop in GetTypeProperties(type.GetTypeInfo().BaseType).Values)
                 {
@@ -200,7 +200,7 @@ namespace ReflectionMagic
                 var parameterType = parametersOnMethod[i].ParameterType.GetTypeInfo();
                 ref var argument = ref passedArguments[i];
 
-                if (argument == null && parameterType.IsValueType)
+                if (argument is null && parameterType.IsValueType)
                 {
                     // Value types can not be null.
                     return false;
@@ -215,12 +215,12 @@ namespace ReflectionMagic
 
                         Debug.Assert(typePassedByRef != null);
 
-                        if (typePassedByRef.IsValueType && argument == null)
+                        if (typePassedByRef.IsValueType && argument is null)
                         {
                             return false;
                         }
 
-                        if (argument != null)
+                        if (!(argument is null))
                         {
                             var argumentType = argument.GetType().GetTypeInfo();
                             var argumentByRefType = argumentType.MakeByRefType().GetTypeInfo();
@@ -237,7 +237,7 @@ namespace ReflectionMagic
                             }
                         }
                     }
-                    else if (argument == null)
+                    else if (argument is null)
                     {
                         continue;
                     }
@@ -264,7 +264,7 @@ namespace ReflectionMagic
             MethodInfo method = null;
             Type currentType = type;
 
-            while (method == null && currentType != null)
+            while (method is null && !(currentType is null))
             {
                 var methods = currentType.GetTypeInfo().GetMethods(allMethods);
 
@@ -293,14 +293,15 @@ namespace ReflectionMagic
                     }
                 }
 
-                if (method == null)
+                if (method is null)
                 {
                     // Move up in the type hierarchy.
+                    // If there is no base type, then this will set currentType to null, terminating the loop.
                     currentType = currentType.GetTypeInfo().BaseType;
                 }
             }
 
-            if (method == null)
+            if (method is null)
             {
                 throw new MissingMethodException($"Method with name '{name}' not found on type '{type.FullName}'.");
             }

@@ -17,10 +17,7 @@ namespace ReflectionMagic
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="field"/> is <c>null</c>.</exception>
         internal Field(FieldInfo field)
         {
-            if(field == null)
-                throw new ArgumentNullException(nameof(field));
-
-            _fieldInfo = field;
+            _fieldInfo = field ?? throw new ArgumentNullException(nameof(field));
         }
 
         public Type PropertyType => _fieldInfo.FieldType;
