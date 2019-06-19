@@ -48,6 +48,10 @@ Doing the same but using the ReflectionMagic library:
 string val = foo1.AsDynamic().GetOtherClass().SomeProp;
 ```
 
+## Download
+
+This library is available through [NuGet](https://www.nuget.org/packages/ReflectionMagic).
+
 ## More info
 
 For more information look at the original blog post by David Ebbo: https://blogs.msdn.microsoft.com/davidebb/2010/01/18/use-c-4-0-dynamic-to-drastically-simplify-your-private-reflection-code/
