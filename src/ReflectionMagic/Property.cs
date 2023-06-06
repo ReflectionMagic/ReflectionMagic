@@ -31,7 +31,21 @@ namespace ReflectionMagic
 
         void IProperty.SetValue(object obj, object value, object[] index)
         {
-            _propertyInfo.SetValue(obj, value, index);
+            if (_propertyInfo.CanWrite)
+            {
+                _propertyInfo.SetValue(obj, value, index);
+            }
+            else
+            {
+                var backingFieldName = $"<{_propertyInfo.Name}>k__BackingField";
+                var type = obj.GetType();
+                var backingField = type.GetTypeInfo().GetField(backingFieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+                if (backingField == null)
+                {
+                    throw new MissingMemberException($"The property {type}.{_propertyInfo.Name} does not have a setter nor a backing field ({backingFieldName}).");
+                }
+                backingField.SetValue(obj, value);
+            }
         }
     }
 

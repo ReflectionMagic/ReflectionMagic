@@ -305,5 +305,32 @@ namespace ReflectionMagicTests
             Assert.Equal("test", fooBar._field);
             Assert.Equal("test", fooBar.Property);
         }
+
+        [Fact]
+        public void TestSettingPublicGetOnlyProperty()
+        {
+            var baz = new Baz();
+            baz.AsDynamic().PublicGetOnlyInteger = 42;
+
+            Assert.Equal(42, baz.PublicGetOnlyInteger);
+        }
+
+        [Fact]
+        public void TestSettingInternalGetOnlyProperty()
+        {
+            var baz = new Baz();
+            baz.AsDynamic().InternalGetOnlyInteger = 42;
+
+            Assert.Equal(42, baz.GetType().GetProperty("InternalGetOnlyInteger", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(baz));
+        }
+
+        [Fact]
+        public void TestSettingPrivateGetOnlyProperty()
+        {
+            var baz = new Baz();
+            baz.AsDynamic().PrivateGetOnlyInteger = 42;
+
+            Assert.Equal(42, baz.GetType().GetProperty("PrivateGetOnlyInteger", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(baz));
+        }
     }
 }
