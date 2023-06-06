@@ -134,4 +134,11 @@ namespace LibraryWithPrivateMembers
         public string _field;
         public string Property { get; set; }
     }
+
+    public class Baz
+    {
+        public int PublicGetOnlyInteger { get; }
+        internal int InternalGetOnlyInteger { get; }
+        private int PrivateGetOnlyInteger { get; }
+    }
 }
