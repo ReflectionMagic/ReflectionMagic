@@ -14,8 +14,8 @@ namespace ReflectionMagicTests
 
         public UnitTest()
         {
-            dynamicFooType = typeof(MarkerType).GetTypeInfo().Assembly.GetDynamicType("LibraryWithPrivateMembers.Foo");
-            dynamicFoo = typeof(MarkerType).GetTypeInfo().Assembly.CreateDynamicInstance("LibraryWithPrivateMembers.Foo");
+            dynamicFooType = typeof(MarkerType).Assembly.GetDynamicType("LibraryWithPrivateMembers.Foo");
+            dynamicFoo = typeof(MarkerType).Assembly.CreateDynamicInstance("LibraryWithPrivateMembers.Foo");
         }
 
         [Fact]
@@ -230,7 +230,6 @@ namespace ReflectionMagicTests
             Assert.Null(result);
         }
 
-#if !NETCOREAPP1_0 && !NETCOREAPP1_1
         [Fact]
         public void TestAddingByRef()
         {
@@ -283,7 +282,6 @@ namespace ReflectionMagicTests
 
             Assert.Throws<MissingMethodException>(() => dynamicFoo.AddTwoRefParameters(ref first, ref second, ref third));
         }
-#endif
 
         [Fact]
         public void TestFieldsAndProperties()

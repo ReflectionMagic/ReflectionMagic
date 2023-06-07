@@ -3,8 +3,7 @@
   <PropertyGroup>
     <AssemblyName>ReflectionMagic</AssemblyName>
     <VersionPrefix>4.1.0</VersionPrefix>
-    <TargetFrameworks>net45;netstandard1.5;netstandard2.0</TargetFrameworks>
-    
+    <TargetFrameworks>net6.0;net462;netstandard2.0</TargetFrameworks>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>Latest</LangVersion>
@@ -15,10 +14,6 @@
     <AssemblyOriginatorKeyFile>../../ReflectionMagic.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
 
   <!-- NuGet properties -->
@@ -30,15 +25,12 @@
 
     <Description>Framework to drastically simplify your private reflection code using C# dynamic</Description>
     <Authors>David Ebbo</Authors>
+    <Company>David Ebbo</Company>
+    <Product>ReflectionMagic</Product>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <Reference Include="Microsoft.CSharp" />
-
-    <PackageReference Include="System.Reflection" Version="4.3.0" />
+  <ItemGroup Condition="$(TargetFrameworkIdentifier) != '.NETCoreApp'">
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' Or '$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
-  </ItemGroup>
 </Project>
