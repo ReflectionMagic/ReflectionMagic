@@ -48,14 +48,4 @@ namespace ReflectionMagic
             }
         }
     }
-
-    [Obsolete("Will be made internal in a future release.")]
-    public static class PropertyInfoExtensions
-    {
-        [Obsolete("This is an internal API. If you are using this consider opening an issue on GitHub.")]
-        public static IProperty ToIProperty(this PropertyInfo info)
-        {
-            return new Property(info);
-        }
-    }
 }
