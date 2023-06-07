@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <VersionPrefix>5.0.0</VersionPrefix>
@@ -17,16 +17,20 @@
 
   <!-- NuGet properties -->
   <PropertyGroup>
-    <PackageId>ReflectionMagic</PackageId>
     <PackageTags>dynamic</PackageTags>
     <PackageProjectUrl>https://github.com/davidebbo/ReflectionMagic</PackageProjectUrl>
-    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <Description>Framework to drastically simplify your private reflection code using C# dynamic</Description>
     <Authors>David Ebbo</Authors>
     <Company>David Ebbo</Company>
     <Product>ReflectionMagic</Product>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
 
   <ItemGroup Condition="$(TargetFrameworkIdentifier) != '.NETCoreApp'">
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
