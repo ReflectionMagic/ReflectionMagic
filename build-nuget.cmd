@@ -1,9 +1,16 @@
 @echo off
-IF "%CI_CONFIG%"=="" (SET CI_CONFIG=Release) 
-echo Starting build in %CI_CONFIG% mode.
+IF "%Configuration%"=="" (SET Configuration=Release)
+IF "%Configuration%"=="Release" (SET ContinuousIntegrationBuild=true)
+echo Starting build in %Configuration% mode (ContinuousIntegrationBuild=%ContinuousIntegrationBuild%).
 
-dotnet clean -c %CI_CONFIG%
-dotnet restore 
-dotnet build -c %CI_CONFIG%
-dotnet test --no-build --verbosity=normal -c %CI_CONFIG% test/ReflectionMagicTests/ReflectionMagicTests.csproj
-dotnet pack --no-build /p:VersionSuffix="%CI_VERSION%" -c %CI_CONFIG% -o ..\..\ --include-symbols src/ReflectionMagic
+dotnet clean
+dotnet restore
+dotnet build --no-restore
+dotnet test --no-build
+dotnet pack --no-build
+
+set Configuration=
+set ContinuousIntegrationBuild=
+
+dotnet tool restore
+dotnet validate package local **\*.nupkg
