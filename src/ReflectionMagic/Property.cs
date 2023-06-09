@@ -39,23 +39,13 @@ namespace ReflectionMagic
             {
                 var backingFieldName = $"<{_propertyInfo.Name}>k__BackingField";
                 var type = obj.GetType();
-                var backingField = type.GetTypeInfo().GetField(backingFieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+                var backingField = type.GetField(backingFieldName, BindingFlags.Instance | BindingFlags.NonPublic);
                 if (backingField == null)
                 {
                     throw new MissingMemberException($"The property {type}.{_propertyInfo.Name} does not have a setter nor a backing field ({backingFieldName}).");
                 }
                 backingField.SetValue(obj, value);
             }
-        }
-    }
-
-    [Obsolete("Will be made internal in a future release.")]
-    public static class PropertyInfoExtensions
-    {
-        [Obsolete("This is an internal API. If you are using this consider opening an issue on GitHub.")]
-        public static IProperty ToIProperty(this PropertyInfo info)
-        {
-            return new Property(info);
         }
     }
 }

@@ -129,12 +129,6 @@ namespace LibraryWithPrivateMembers
         internal string SomeBarStringProperty { get; set; }
     }
 
-    public class FooBar
-    {
-        public string _field;
-        public string Property { get; set; }
-    }
-
     public class Baz
     {
         public int PublicGetOnlyInteger { get; }

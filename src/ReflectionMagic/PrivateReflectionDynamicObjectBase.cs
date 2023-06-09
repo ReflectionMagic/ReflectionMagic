@@ -9,10 +9,6 @@ namespace ReflectionMagic
 {
     public abstract class PrivateReflectionDynamicObjectBase : DynamicObject
     {
-#if NET45
-        private static readonly Type[] _emptyTypes = new Type[0];
-#endif
-
         // We need to virtualize this so we use a different cache for instance and static props
         protected abstract IDictionary<Type, IDictionary<string, IProperty>> PropertiesOnType { get; }
 
@@ -106,7 +102,7 @@ namespace ReflectionMagic
             if (binder is null)
                 throw new ArgumentNullException(nameof(binder));
 
-            result = binder.Type.GetTypeInfo().IsInstanceOfType(RealObject) ? RealObject : Convert.ChangeType(RealObject, binder.Type);
+            result = binder.Type.IsInstanceOfType(RealObject) ? RealObject : Convert.ChangeType(RealObject, binder.Type);
 
             return true;
         }
@@ -153,16 +149,16 @@ namespace ReflectionMagic
             typeProperties = new Dictionary<string, IProperty>();
 
             // First, recurse on the base class to add its fields
-            if (!(type.GetTypeInfo().BaseType is null))
+            if (!(type.BaseType is null))
             {
-                foreach (IProperty prop in GetTypeProperties(type.GetTypeInfo().BaseType).Values)
+                foreach (IProperty prop in GetTypeProperties(type.BaseType).Values)
                 {
                     typeProperties[prop.Name] = prop;
                 }
             }
 
             // Then, add all the properties from the current type
-            foreach (PropertyInfo prop in type.GetTypeInfo().GetProperties(BindingFlags))
+            foreach (PropertyInfo prop in type.GetProperties(BindingFlags))
             {
                 if (prop.DeclaringType == type)
                 {
@@ -171,7 +167,7 @@ namespace ReflectionMagic
             }
 
             // Finally, add all the fields from the current type
-            foreach (FieldInfo field in type.GetTypeInfo().GetFields(BindingFlags))
+            foreach (FieldInfo field in type.GetFields(BindingFlags))
             {
                 if (field.DeclaringType == type)
                 {
@@ -197,7 +193,7 @@ namespace ReflectionMagic
 
             for (int i = 0; i < parametersOnMethod.Length; ++i)
             {
-                var parameterType = parametersOnMethod[i].ParameterType.GetTypeInfo();
+                var parameterType = parametersOnMethod[i].ParameterType;
                 ref var argument = ref passedArguments[i];
 
                 if (argument is null && parameterType.IsValueType)
@@ -211,7 +207,7 @@ namespace ReflectionMagic
                     // Parameters should be instance of the parameter type.
                     if (parameterType.IsByRef)
                     {
-                        var typePassedByRef = parameterType.GetElementType().GetTypeInfo();
+                        var typePassedByRef = parameterType.GetElementType();
 
                         Debug.Assert(typePassedByRef != null);
 
@@ -222,13 +218,13 @@ namespace ReflectionMagic
 
                         if (!(argument is null))
                         {
-                            var argumentType = argument.GetType().GetTypeInfo();
-                            var argumentByRefType = argumentType.MakeByRefType().GetTypeInfo();
+                            var argumentType = argument.GetType();
+                            var argumentByRefType = argumentType.MakeByRefType();
                             if (parameterType != argumentByRefType)
                             {
                                 try
                                 {
-                                    argument = Convert.ChangeType(argument, typePassedByRef.AsType());
+                                    argument = Convert.ChangeType(argument, typePassedByRef);
                                 }
                                 catch (InvalidCastException)
                                 {
@@ -266,7 +262,7 @@ namespace ReflectionMagic
 
             while (method is null && !(currentType is null))
             {
-                var methods = currentType.GetTypeInfo().GetMethods(allMethods);
+                var methods = currentType.GetMethods(allMethods);
 
                 MethodInfo candidate;
                 for (int i = 0; i < methods.Length; ++i)
@@ -297,7 +293,7 @@ namespace ReflectionMagic
                 {
                     // Move up in the type hierarchy.
                     // If there is no base type, then this will set currentType to null, terminating the loop.
-                    currentType = currentType.GetTypeInfo().BaseType;
+                    currentType = currentType.BaseType;
                 }
             }
 
@@ -312,20 +308,16 @@ namespace ReflectionMagic
         private static Type[] GetGenericMethodArguments(InvokeMemberBinder binder)
         {
             var csharpInvokeMemberBinderType = binder
-                    .GetType().GetTypeInfo()
+                    .GetType()
                     .GetInterface("Microsoft.CSharp.RuntimeBinder.ICSharpInvokeOrInvokeMemberBinder")
-                    .GetTypeInfo();
+                    ;
 
             var typeArgsList = (IList<Type>)csharpInvokeMemberBinderType.GetProperty("TypeArguments").GetValue(binder, null);
 
             Type[] typeArgs;
             if (typeArgsList.Count == 0)
             {
-#if NET45
-                typeArgs = _emptyTypes;
-#else
                 typeArgs = Array.Empty<Type>();
-#endif
             }
             else
             {

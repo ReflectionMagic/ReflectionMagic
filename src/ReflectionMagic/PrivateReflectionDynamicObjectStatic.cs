@@ -2,14 +2,13 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 
 namespace ReflectionMagic
 {
     public class PrivateReflectionDynamicObjectStatic : PrivateReflectionDynamicObjectBase
     {
-        private static readonly ConcurrentDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new ConcurrentDictionary<Type, IDictionary<string, IProperty>>();
+        private static readonly ConcurrentDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PrivateReflectionDynamicObjectStatic"/> class, wrapping the specified type.
@@ -42,42 +41,7 @@ namespace ReflectionMagic
 
             Debug.Assert(TargetType != null);
 
-#if NETSTANDARD1_5
-            var constructors = TargetType.GetTypeInfo().GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-            object result = null;
-            for (int i = 0; i < constructors.Length; ++i)
-            {
-                var constructor = constructors[i];
-                var parameters = constructor.GetParameters();
-
-                if (parameters.Length == args.Length)
-                {
-                    bool found = true;
-                    for (int j = 0; j < args.Length; ++j)
-                    {
-                        if (parameters[j].ParameterType != args[j].GetType())
-                        {
-                            found = false;
-                            break;
-                        }
-                    }
-
-                    if (found)
-                    {
-                        result = constructor.Invoke(args);
-                        break;
-                    }
-                }
-            }
-
-            if (result is null)
-                throw new MissingMethodException($"Constructor that accepts parameters: '{string.Join(", ", args.Select(x => x.GetType().ToString()))}' not found.");
-
-            return result.AsDynamic();
-#else
             return Activator.CreateInstance(TargetType, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, args, null).AsDynamic();
-#endif
         }
     }
 }

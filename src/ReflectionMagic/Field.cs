@@ -34,14 +34,4 @@ namespace ReflectionMagic
             _fieldInfo.SetValue(obj, value);
         }
     }
-
-    [Obsolete("Will be made internal in a future release.")]
-    public static class FieldInfoExtensions
-    {
-        [Obsolete("This is an internal API. If you are using this consider opening an issue on GitHub.")]
-        public static IProperty ToIProperty(this FieldInfo info)
-        {
-            return new Field(info);
-        }
-    }
 }

@@ -7,7 +7,7 @@ namespace ReflectionMagic
 {
     public class PrivateReflectionDynamicObjectInstance : PrivateReflectionDynamicObjectBase
     {
-        private static readonly ConcurrentDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new ConcurrentDictionary<Type, IDictionary<string, IProperty>>();
+        private static readonly ConcurrentDictionary<Type, IDictionary<string, IProperty>> _propertiesOnType = new();
 
         private readonly object _instance;
 

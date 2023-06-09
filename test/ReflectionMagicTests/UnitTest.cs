@@ -1,4 +1,4 @@
-﻿using LibraryWithPrivateMembers;
+using LibraryWithPrivateMembers;
 using ReflectionMagic;
 using System;
 using System.Linq;
@@ -14,8 +14,8 @@ namespace ReflectionMagicTests
 
         public UnitTest()
         {
-            dynamicFooType = typeof(MarkerType).GetTypeInfo().Assembly.GetDynamicType("LibraryWithPrivateMembers.Foo");
-            dynamicFoo = typeof(MarkerType).GetTypeInfo().Assembly.CreateDynamicInstance("LibraryWithPrivateMembers.Foo");
+            dynamicFooType = typeof(MarkerType).Assembly.GetDynamicType("LibraryWithPrivateMembers.Foo");
+            dynamicFoo = typeof(MarkerType).Assembly.CreateDynamicInstance("LibraryWithPrivateMembers.Foo");
         }
 
         [Fact]
@@ -230,7 +230,6 @@ namespace ReflectionMagicTests
             Assert.Null(result);
         }
 
-#if !NETCOREAPP1_0 && !NETCOREAPP1_1
         [Fact]
         public void TestAddingByRef()
         {
@@ -282,28 +281,6 @@ namespace ReflectionMagicTests
             int third = 0;
 
             Assert.Throws<MissingMethodException>(() => dynamicFoo.AddTwoRefParameters(ref first, ref second, ref third));
-        }
-#endif
-
-        [Fact]
-        public void TestFieldsAndProperties()
-        {
-            var fooBar = new FooBar();
-
-#pragma warning disable CS0618 // Type or member is obsolete
-            var properties = typeof(FooBar).GetProperties().Select(pi => pi.ToIProperty())
-                                 .Union(
-                             typeof(FooBar).GetFields().Select(fi => fi.ToIProperty()));
-#pragma warning restore CS0618 // Type or member is obsolete
-
-            foreach (var property in properties)
-            {
-                property.SetValue(fooBar, "test", null);
-                Assert.Equal(typeof(string), property.PropertyType);
-            }
-
-            Assert.Equal("test", fooBar._field);
-            Assert.Equal("test", fooBar.Property);
         }
 
         [Fact]
