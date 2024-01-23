@@ -135,4 +135,8 @@ namespace LibraryWithPrivateMembers
         internal int InternalGetOnlyInteger { get; }
         private int PrivateGetOnlyInteger { get; }
     }
+
+    public class Qux : Baz
+    {
+    }
 }

@@ -1,7 +1,6 @@
 using LibraryWithPrivateMembers;
 using ReflectionMagic;
 using System;
-using System.Linq;
 using System.Reflection;
 using Xunit;
 
@@ -308,6 +307,33 @@ namespace ReflectionMagicTests
             baz.AsDynamic().PrivateGetOnlyInteger = 42;
 
             Assert.Equal(42, baz.GetType().GetProperty("PrivateGetOnlyInteger", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(baz));
+        }
+
+        [Fact]
+        public void TestSettingPublicInheritedGetOnlyProperty()
+        {
+            var qux = new Qux();
+            qux.AsDynamic().PublicGetOnlyInteger = 42;
+
+            Assert.Equal(42, qux.PublicGetOnlyInteger);
+        }
+
+        [Fact]
+        public void TestSettingInternalInheritedGetOnlyProperty()
+        {
+            var qux = new Qux();
+            qux.AsDynamic().InternalGetOnlyInteger = 42;
+
+            Assert.Equal(42, qux.GetType().BaseType?.GetProperty("InternalGetOnlyInteger", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(qux));
+        }
+
+        [Fact]
+        public void TestSettingPrivateInheritedGetOnlyProperty()
+        {
+            var qux = new Qux();
+            qux.AsDynamic().PrivateGetOnlyInteger = 42;
+
+            Assert.Equal(42, qux.GetType().BaseType?.GetProperty("PrivateGetOnlyInteger", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(qux));
         }
     }
 }
