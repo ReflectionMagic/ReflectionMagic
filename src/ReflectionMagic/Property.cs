@@ -38,13 +38,16 @@ namespace ReflectionMagic
             else
             {
                 var backingFieldName = $"<{_propertyInfo.Name}>k__BackingField";
-                var type = obj.GetType();
-                var backingField = type.GetField(backingFieldName, BindingFlags.Instance | BindingFlags.NonPublic);
-                if (backingField == null)
+                for (var type = obj.GetType(); type != null; type = type.BaseType)
                 {
-                    throw new MissingMemberException($"The property {type}.{_propertyInfo.Name} does not have a setter nor a backing field ({backingFieldName}).");
+                    var backingField = type.GetField(backingFieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+                    if (backingField != null)
+                    {
+                        backingField.SetValue(obj, value);
+                        return;
+                    }
                 }
-                backingField.SetValue(obj, value);
+                throw new MissingMemberException($"The property {obj.GetType()}.{_propertyInfo.Name} does not have a setter nor a backing field ({backingFieldName}).");
             }
         }
     }
