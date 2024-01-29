@@ -170,7 +170,7 @@ namespace ReflectionMagicTests
         [Fact]
         public void TestNullSubObject()
         {
-            Assert.Equal(null, dynamicFoo._barNull);
+            Assert.Null(dynamicFoo._barNull);
         }
 
         [Fact]
