@@ -29,8 +29,8 @@ function Exec
     }
 }
 
-exec { & dotnet clean -c $BuildConfiguration }
+exec { & dotnet clean --configuration $BuildConfiguration }
 exec { & dotnet restore }
-exec { & dotnet build -c $BuildConfiguration /p:VersionSuffix="$VersionSuffix" }
-exec { & dotnet test -r $TestResultOutputDirectory -l trx --no-build --verbosity=normal -c $BuildConfiguration test/ReflectionMagicTests/ReflectionMagicTests.csproj }
-exec { & dotnet pack --no-build /p:VersionSuffix="$VersionSuffix" -c $BuildConfiguration -o $OutputDirectory --include-symbols src/ReflectionMagic }
+exec { & dotnet build --configuration $BuildConfiguration /p:VersionSuffix="$VersionSuffix" }
+exec { & dotnet test --results-directory $TestResultOutputDirectory --logger trx --no-build --verbosity=normal --configuration $BuildConfiguration ./test/ReflectionMagicTests/ReflectionMagicTests.csproj }
+exec { & dotnet pack --no-build /p:VersionSuffix="$VersionSuffix" --configuration $BuildConfiguration --output $OutputDirectory --include-symbols src/ReflectionMagic }
