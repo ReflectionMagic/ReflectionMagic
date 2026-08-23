@@ -31,6 +31,8 @@ function Exec
 
 exec { & dotnet clean --configuration $BuildConfiguration }
 exec { & dotnet restore }
+exec { & dotnet tool restore }
 exec { & dotnet build --configuration $BuildConfiguration /p:VersionSuffix="$VersionSuffix" }
 exec { & dotnet test --results-directory $TestResultOutputDirectory --logger trx --no-build --verbosity=normal --configuration $BuildConfiguration ./test/ReflectionMagicTests/ReflectionMagicTests.csproj }
 exec { & dotnet pack --no-build /p:VersionSuffix="$VersionSuffix" --configuration $BuildConfiguration --output $OutputDirectory --include-symbols src/ReflectionMagic }
+exec { & dotnet validate package local **\*.nupkg }
