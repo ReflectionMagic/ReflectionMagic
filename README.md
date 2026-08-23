@@ -1,5 +1,5 @@
 # ReflectionMagic
-[![Build Status](https://dev.azure.com/jvandertil/OpenSource/_apis/build/status/github/ReflectionMagic/ReflectionMagic/Continuous%20Integration?branchName=master)](https://dev.azure.com/jvandertil/OpenSource/_build/latest?definitionId=3&branchName=master)
+[![Build and Publish](https://github.com/ReflectionMagic/ReflectionMagic/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/ReflectionMagic/ReflectionMagic/actions/workflows/build-and-publish.yml)
 
 Private reflection allows you to access private and internal members in other assemblies.  Generally, it’s considered to be a bad thing to do, as it ties you to undocumented implementation details which can later break you.  Also, it’s not usable in medium trust.
 
