@@ -66,6 +66,3 @@ jobs:
       # Push the packages
       - name: NuGet push
         run: dotnet nuget push *.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
-
-      - name: NuGet push
-        run: dotnet nuget push *.snupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json

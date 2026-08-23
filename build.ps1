@@ -34,6 +34,5 @@ exec { & dotnet restore }
 exec { & dotnet tool restore }
 exec { & dotnet build --no-restore --configuration $BuildConfiguration /p:VersionSuffix="$VersionSuffix" /p:ContinuousIntegrationBuild=true }
 exec { & dotnet test --results-directory $TestResultOutputDirectory --no-build --verbosity=normal --configuration $BuildConfiguration --project ./test/ReflectionMagicTests/ReflectionMagicTests.csproj }
-exec { & dotnet pack --no-build /p:IncludeSymbols="true" /p:SymbolPackageFormat="snupkg" /p:VersionSuffix="$VersionSuffix" --configuration $BuildConfiguration --output $OutputDirectory --include-symbols src/ReflectionMagic }
+exec { & dotnet pack --no-build /p:VersionSuffix="$VersionSuffix" --configuration $BuildConfiguration --output $OutputDirectory src/ReflectionMagic }
 exec { & dotnet validate package local **\*.nupkg }
-exec { & dotnet validate package local **\*.snupkg }
