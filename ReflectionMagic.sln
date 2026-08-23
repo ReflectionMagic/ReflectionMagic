@@ -1,16 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+# Visual Studio Version 18
+VisualStudioVersion = 18.9.12112.369 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8F82B878-92C3-4982-9C7B-9F877352010D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EFD11FC-DE26-4864-A678-B06E9C78463E}"
 	ProjectSection(SolutionItems) = preProject
-		ReflectionMagic.snk = ReflectionMagic.snk
-		build.ps1 = build.ps1
 		build-nuget.cmd = build-nuget.cmd
-		global.json = global.json
+		build.ps1 = build.ps1
+		ReflectionMagic.snk = ReflectionMagic.snk
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{104DADBE-0311-418B-AC13-10E36B66EC1D}"
